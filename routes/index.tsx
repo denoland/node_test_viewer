@@ -3,6 +3,39 @@ import { Rev } from "components/Rev.tsx";
 import { Chart } from "islands/Chart.tsx";
 import { DailyTable } from "islands/DailyTable.tsx";
 
+export default define.page(function () {
+  return (
+    <div class="w-full">
+      <Header />
+      <LatestResults />
+      <div class="pt-10 pb-5 border-b border-dashed">
+        <div class="text-sm text-gray-600 text-center">
+          TODO: chart is not working yet
+        </div>
+        <div class="w-full flex justify-center">
+          <Chart class="w-4/5 h-[200px]" />
+        </div>
+        <div class="mt-10 text-sm text-gray-600 text-center">
+          TODO: table is not working yet
+        </div>
+        <div class="mt-10">
+          <DailyTable
+            class="mx-auto w-4/5"
+            data={new Array(20).fill(0).map((_, i) => ({
+              date: new Date(Date.now() - i * 24 * 60 * 60 * 1000),
+              data: data.map((item) => ({
+                ...item,
+                pass: Math.floor(Math.random() * item.total),
+              })),
+            }))}
+          />
+        </div>
+      </div>
+      <Footer />
+    </div>
+  );
+});
+
 const data = [
   {
     name: "linux",
@@ -25,40 +58,12 @@ const data = [
 
 const date = "2025-04-02";
 
-export default define.page(function () {
-  return (
-    <div class="w-full">
-      <Header />
-      <LatestResults />
-      <div class="pt-10 pb-5 border-b border-dashed">
-        <div class="text-sm text-gray-600 text-center">
-          TODO: charts are not working yet
-        </div>
-        <div class="w-full flex justify-center">
-          <Chart class="w-4/5 h-[200px]" />
-        </div>
-        <div class="mt-10">
-          <DailyTable
-            class="mx-auto w-4/5"
-            data={new Array(20).fill(0).map((_, i) => ({
-              date: new Date(Date.now() - i * 24 * 60 * 60 * 1000),
-              data: data.map((item) => ({
-                ...item,
-                pass: Math.floor(Math.random() * item.total),
-              })),
-            }))}
-          />
-        </div>
-      </div>
-      <Footer />
-    </div>
-  );
-});
-
 function Header() {
   return (
     <div class="w-full flex justify-between items-center px-7 py-3 border-b border-dashed">
-      <h1 class="text-md font-semibold">🐢🚀🦕 Node test viewer</h1>
+      <h1 class="text-md font-semibold">
+        <img class="h-8 inline mr-1" src="/node-deno.svg" /> Node test viewer
+      </h1>
     </div>
   );
 }
@@ -68,7 +73,8 @@ function LatestResults() {
     <div class="w-full pt-10 pb-5 border-b border-dashed">
       <div class="px-10 text-sm text-gray-500">
         This page tracks the ratio of passed Node test cases with{" "}
-        <a href="https://github.com/denoland/deno">Deno</a> runtime
+        <a href="https://github.com/denoland/deno" target="_blank">Deno</a>{" "}
+        runtime
       </div>
       <h2 class="px-10">
         <span class="font-bold text-xl">Latest results</span>{" "}
