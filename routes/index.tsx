@@ -26,9 +26,6 @@ export default define.page<typeof handler>(function (props) {
         <div class="w-full flex justify-center">
           <Chart summary={monthSummary} class="w-4/5 h-[200px]" />
         </div>
-        <div class="mt-10 text-sm text-gray-600 text-center">
-          TODO: table is not working yet
-        </div>
         <div class="mt-10">
           <DailyTable
             class="mx-auto w-4/5"
@@ -74,6 +71,7 @@ function Header() {
 }
 
 function LatestResults(props: { summary: DaySummary | undefined }) {
+  const date = props.summary?.date;
   const data = [
     ["linux", props.summary?.linux],
     ["windows", props.summary?.windows],
@@ -87,8 +85,13 @@ function LatestResults(props: { summary: DaySummary | undefined }) {
         runtime
       </div>
       <h2 class="px-10">
-        <span class="font-bold text-xl">Latest results</span>{" "}
-        (<a class="text-blue-500" href={"/results/" + date}>{date}</a>)
+        <span class="font-bold text-xl">Latest results</span> ({date
+          ? (
+            <a class="text-blue-500" href={"/results/" + date}>
+              {date}
+            </a>
+          )
+          : <span>N/A</span>})
       </h2>
       <div class="mt-4 w-full flex items-center justify-evenly">
         {data.map(([os, item]) => (
