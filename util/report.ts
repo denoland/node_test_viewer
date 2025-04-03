@@ -2,6 +2,7 @@
 
 import { toJson } from "@std/streams";
 import type {
+  DayReport,
   DaySummary,
   MonthSummary,
   TestReport,
@@ -63,11 +64,12 @@ export async function getReport(
   return report;
 }
 
-async function getReportForDate(date: string) {
+export async function getReportForDate(date: string): Promise<DayReport> {
   const windows = await getReport(date, "windows");
   const linux = await getReport(date, "linux");
   const darwin = await getReport(date, "darwin");
   return {
+    date,
     windows,
     linux,
     darwin,

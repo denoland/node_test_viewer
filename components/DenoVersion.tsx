@@ -1,7 +1,7 @@
 // Copyright 2025 the Deno authors. MIT license.
 
 export function DenoVersion(
-  props: { version: string | undefined; label?: string },
+  props: { version: string | undefined; label?: string; class?: string },
 ) {
   const { version } = props;
   if (!version) {
@@ -15,7 +15,9 @@ export function DenoVersion(
         href={"https://github.com/denoland/deno/commit/" + version}
         title={version}
         target="_blank"
-        class="hover:text-blue-500 transition-colors duration-200"
+        class={`hover:text-blue-500 transition-colors duration-200 ${
+          props.class ?? ""
+        }`}
       >
         {props.label ?? version}
       </a>

@@ -1,6 +1,6 @@
 // Copyright 2025 the Deno authors. MIT license.
 
-import { define } from "../utils.ts";
+import { define } from "util/fresh.ts";
 import { DenoVersion } from "../components/DenoVersion.tsx";
 import { Chart } from "islands/Chart.tsx";
 import { DailyTable } from "islands/DailyTable.tsx";
@@ -19,8 +19,7 @@ export default define.page<typeof handler>(function (props) {
   const { monthSummary, daySummary } = props.data;
   console.log("summary", monthSummary);
   return (
-    <div class="w-full">
-      <Header />
+    <>
       <LatestResults summary={daySummary} />
       <div class="pt-10 pb-5 border-b border-dashed">
         <div class="w-full flex justify-center">
@@ -33,20 +32,9 @@ export default define.page<typeof handler>(function (props) {
           />
         </div>
       </div>
-      <Footer />
-    </div>
+    </>
   );
 });
-
-function Header() {
-  return (
-    <div class="w-full flex justify-between items-center px-7 py-3 border-b border-dashed">
-      <h1 class="text-md font-semibold">
-        <img class="h-8 inline mr-1" src="/node-deno.svg" /> Node test viewer
-      </h1>
-    </div>
-  );
-}
 
 function LatestResults(props: { summary: DaySummary | undefined }) {
   const date = props.summary?.date;
@@ -93,28 +81,6 @@ function LatestResults(props: { summary: DaySummary | undefined }) {
           </div>
         ))}
       </div>
-    </div>
-  );
-}
-
-function Footer() {
-  return (
-    <div class="py-5 text-sm text-center">
-      <a
-        class="text-blue-500"
-        href="https://github.com/denoland/node_test_viewer"
-        target="_blank"
-      >
-        source of this page
-      </a>
-      ・
-      <a
-        class="text-blue-500"
-        href="https://github.com/denoland/deno"
-        target="_blank"
-      >
-        deno
-      </a>
     </div>
   );
 }

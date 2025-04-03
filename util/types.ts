@@ -1,6 +1,6 @@
 // Copyright 2025 the Deno authors. MIT license.
 
-type SingleResult = [
+export type SingleResult = [
   pass: boolean,
   error?: ErrorExit | ErrorTimeout | ErrorUnexpected,
 ];
@@ -30,6 +30,13 @@ export type TestReportMetadata = {
 /** The test report format, which is stored in JSON file */
 export type TestReport = TestReportMetadata & {
   results: Record<string, SingleResult>;
+};
+
+export type DayReport = {
+  date: string;
+  windows: TestReport | undefined;
+  linux: TestReport | undefined;
+  darwin: TestReport | undefined;
 };
 
 export type DaySummary = {
