@@ -34,14 +34,9 @@ export function Chart(props: { class?: string; summary: MonthSummary }) {
         "https://cdn.skypack.dev/pin/apexcharts@v3.26.1-JfauDUVk6IgccJUyzphD/mode=imports,min/optimized/apexcharts.js"
       );
 
-      const dates = Object.keys(props.summary.reports).sort();
-
       const linuxData = extractData("linux", props.summary);
       const windowsData = extractData("windows", props.summary);
       const darwinData = extractData("darwin", props.summary);
-      console.log("linuxData", linuxData);
-      console.log("windowsData", windowsData);
-      console.log("darwinData", darwinData);
 
       const chart = new ApexCharts(chartRef.current!, {
         chart: {

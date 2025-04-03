@@ -38,28 +38,6 @@ export default define.page<typeof handler>(function (props) {
   );
 });
 
-const data = [
-  {
-    name: "linux",
-    pass: 1144,
-    total: 3945,
-    rev: "73798b13bbc45acc9896244f034d2427f2b55c55",
-  },
-  {
-    name: "windows",
-    pass: 1144,
-    total: 3945,
-    rev: "73798b13bbc45acc9896244f034d2427f2b55c55",
-  },
-  {
-    name: "darwin",
-    pass: 1144,
-    total: 3945,
-  },
-];
-
-const date = "2025-04-02";
-
 function Header() {
   return (
     <div class="w-full flex justify-between items-center px-7 py-3 border-b border-dashed">
