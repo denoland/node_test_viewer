@@ -18,20 +18,24 @@
     "**/_fresh/*"
   ],
   "imports": {
+    "@kt3k/weak-value-map": "jsr:@kt3k/weak-value-map@^0.1.2",
+    "@std/streams": "jsr:@std/streams@^1.0.9",
     "fresh": "jsr:@fresh/core@^2.0.0-alpha.29",
     "@fresh/plugin-tailwind": "jsr:@fresh/plugin-tailwind@^0.0.1-alpha.7",
     "preact": "npm:preact@^10.25.4",
     "@preact/signals": "npm:@preact/signals@^2.0.1",
     "tailwindcss": "npm:tailwindcss@^3.4.3",
     "components/": "./components/",
-    "islands/": "./islands/"
+    "islands/": "./islands/",
+    "util/": "./util/"
   },
   "compilerOptions": {
     "lib": [
       "dom",
       "dom.asynciterable",
       "dom.iterable",
-      "deno.ns"
+      "deno.ns",
+      "deno.unstable"
     ],
     "jsx": "precompile",
     "jsxImportSource": "preact",
@@ -43,5 +47,8 @@
       "html",
       "head"
     ]
-  }
+  },
+  "unstable": [
+    "kv"
+  ]
 }

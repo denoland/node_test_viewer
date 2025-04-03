@@ -1,3 +1,5 @@
+// Copyright 2018-2025 the Deno authors. MIT license.
+
 export function Rev(props: { rev: string | undefined; label?: string }) {
   if (!props.rev) {
     return <span>N/A</span>;

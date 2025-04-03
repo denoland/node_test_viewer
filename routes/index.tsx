@@ -1,3 +1,5 @@
+// Copyright 2018-2025 the Deno authors. MIT license.
+
 import { define } from "../utils.ts";
 import { Rev } from "components/Rev.tsx";
 import { Chart } from "islands/Chart.tsx";
@@ -78,7 +80,7 @@ function LatestResults() {
       </div>
       <h2 class="px-10">
         <span class="font-bold text-xl">Latest results</span>{" "}
-        (<a class="text-blue-500" href={"/" + date}>{date}</a>)
+        (<a class="text-blue-500" href={"/results/" + date}>{date}</a>)
       </h2>
       <div class="mt-4 w-full flex items-center justify-evenly">
         {data.map((item) => (

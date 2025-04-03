@@ -1,3 +1,5 @@
+// Copyright 2018-2025 the Deno authors. MIT license.
+
 type Data = {
   name: string;
   pass: number;
@@ -34,9 +36,8 @@ export function DailyTable(props: { data: DataRow[]; class?: string }) {
 }
 
 function TableRow(props: { date: string; data: Data[] }) {
-  const open = () => {
-    globalThis.open("/" + props.date, "_blank");
-  };
+  const open = () => globalThis.open("/results/" + props.date, "_blank");
+
   return (
     <tr
       class="border-t border-grey-500 hover:bg-gray-50 cursor-pointer"
