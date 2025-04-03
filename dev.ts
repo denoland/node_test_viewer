@@ -1,4 +1,5 @@
 #!/usr/bin/env -S deno run -A --watch=static/,routes/
+// Copyright 2025 the Deno authors. MIT license.
 import { tailwind } from "@fresh/plugin-tailwind";
 
 import { Builder } from "fresh/dev";

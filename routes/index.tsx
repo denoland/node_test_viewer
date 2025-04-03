@@ -1,15 +1,27 @@
-// Copyright 2018-2025 the Deno authors. MIT license.
+// Copyright 2025 the Deno authors. MIT license.
 
 import { define } from "../utils.ts";
-import { Rev } from "components/Rev.tsx";
+import { DenoVersion } from "../components/DenoVersion.tsx";
 import { Chart } from "islands/Chart.tsx";
 import { DailyTable } from "islands/DailyTable.tsx";
+import { getLatestDaySummary, getSummaryForLatestMonth } from "util/report.ts";
+import { DaySummary } from "util/types.ts";
 
-export default define.page(function () {
+export const handler = define.handlers({
+  async GET() {
+    const monthSummary = await getSummaryForLatestMonth();
+    const daySummary = getLatestDaySummary(monthSummary);
+    return { data: { monthSummary, daySummary } };
+  },
+});
+
+export default define.page<typeof handler>(function (props) {
+  const { monthSummary, daySummary } = props.data;
+  console.log("summary", monthSummary);
   return (
     <div class="w-full">
       <Header />
-      <LatestResults />
+      <LatestResults daySummary={daySummary} />
       <div class="pt-10 pb-5 border-b border-dashed">
         <div class="text-sm text-gray-600 text-center">
           TODO: chart is not working yet
@@ -70,7 +82,12 @@ function Header() {
   );
 }
 
-function LatestResults() {
+function LatestResults(props: { daySummary: DaySummary | undefined }) {
+  const data = [
+    ["linux", props.daySummary?.linux],
+    ["windows", props.daySummary?.windows],
+    ["darwin", props.daySummary?.darwin],
+  ] as const;
   return (
     <div class="w-full pt-10 pb-5 border-b border-dashed">
       <div class="px-10 text-sm text-gray-500">
@@ -83,18 +100,24 @@ function LatestResults() {
         (<a class="text-blue-500" href={"/results/" + date}>{date}</a>)
       </h2>
       <div class="mt-4 w-full flex items-center justify-evenly">
-        {data.map((item) => (
-          <div class="text-center" key={item.name}>
+        {data.map(([os, item]) => (
+          <div class="text-center" key={os}>
             <header class="font-semibold text-md capitalize">
-              {item.name}
+              {os}
             </header>
-            <div>
-              {item.pass}/{item.total}{" "}
-              ({(item.pass / item.total * 100).toFixed(2)}%)
-            </div>
-            <div class="text-sm text-gray-500">
-              rev <Rev rev={item.rev} />
-            </div>
+            {item
+              ? (
+                <>
+                  <div>
+                    {item.pass}/{item.total}{" "}
+                    ({(item.pass / item.total * 100).toFixed(2)}%)
+                  </div>
+                  <div class="text-sm text-gray-500">
+                    rev <DenoVersion version={item?.denoVersion} />
+                  </div>
+                </>
+              )
+              : <div class="text-gray-400">N/A</div>}
           </div>
         ))}
       </div>

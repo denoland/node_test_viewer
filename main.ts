@@ -1,3 +1,5 @@
+// Copyright 2025 the Deno authors. MIT license.
+
 import { App, fsRoutes, staticFiles } from "fresh";
 import { define, type State } from "./utils.ts";
 

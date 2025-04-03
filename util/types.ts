@@ -15,8 +15,8 @@ type ErrorUnexpected = {
   message: string;
 };
 
-// The metadata of the test report
-type TestReportMetadata = {
+/** The metadata of the test report */
+export type TestReportMetadata = {
   date: string;
   denoVersion: string;
   os: string;
@@ -27,7 +27,19 @@ type TestReportMetadata = {
   pass: number;
 };
 
-// The test report format, which is stored in JSON file
+/** The test report format, which is stored in JSON file */
 export type TestReport = TestReportMetadata & {
   results: Record<string, SingleResult>;
+};
+
+export type DaySummary = {
+  date: string;
+  windows: TestReportMetadata | undefined;
+  linux: TestReportMetadata | undefined;
+  darwin: TestReportMetadata | undefined;
+};
+
+export type MonthSummary = {
+  reports: Record<string, DaySummary>;
+  month: string;
 };
