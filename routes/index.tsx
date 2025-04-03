@@ -21,13 +21,10 @@ export default define.page<typeof handler>(function (props) {
   return (
     <div class="w-full">
       <Header />
-      <LatestResults daySummary={daySummary} />
+      <LatestResults summary={daySummary} />
       <div class="pt-10 pb-5 border-b border-dashed">
-        <div class="text-sm text-gray-600 text-center">
-          TODO: chart is not working yet
-        </div>
         <div class="w-full flex justify-center">
-          <Chart class="w-4/5 h-[200px]" />
+          <Chart summary={monthSummary} class="w-4/5 h-[200px]" />
         </div>
         <div class="mt-10 text-sm text-gray-600 text-center">
           TODO: table is not working yet
@@ -35,13 +32,7 @@ export default define.page<typeof handler>(function (props) {
         <div class="mt-10">
           <DailyTable
             class="mx-auto w-4/5"
-            data={new Array(20).fill(0).map((_, i) => ({
-              date: new Date(Date.now() - i * 24 * 60 * 60 * 1000),
-              data: data.map((item) => ({
-                ...item,
-                pass: Math.floor(Math.random() * item.total),
-              })),
-            }))}
+            summary={monthSummary}
           />
         </div>
       </div>
@@ -82,11 +73,11 @@ function Header() {
   );
 }
 
-function LatestResults(props: { daySummary: DaySummary | undefined }) {
+function LatestResults(props: { summary: DaySummary | undefined }) {
   const data = [
-    ["linux", props.daySummary?.linux],
-    ["windows", props.daySummary?.windows],
-    ["darwin", props.daySummary?.darwin],
+    ["linux", props.summary?.linux],
+    ["windows", props.summary?.windows],
+    ["darwin", props.summary?.darwin],
   ] as const;
   return (
     <div class="w-full pt-10 pb-5 border-b border-dashed">
