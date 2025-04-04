@@ -43,7 +43,7 @@ export const categories = [
   "others",
 ] as const;
 
-type Category = typeof categories[number];
+export type Category = typeof categories[number];
 
 const prefixToCategoryMap: Record<string, Category> = {
   "test-abortcontroller": "web",
@@ -129,4 +129,21 @@ export function getTestCategory(name: string): Category {
     }
   }
   return "others";
+}
+
+export function splitTestNamesByCategory(
+  names: string[],
+): [Category, string[]][] {
+  const categories = {} as Record<Category, string[]>;
+  for (const name of names) {
+    const category = getTestCategory(name);
+    if (!categories[category]) {
+      categories[category] = [];
+    }
+    categories[category].push(name);
+  }
+  return Object.entries(categories).sort(([a], [b]) => a.localeCompare(b)) as [
+    Category,
+    string[],
+  ][];
 }

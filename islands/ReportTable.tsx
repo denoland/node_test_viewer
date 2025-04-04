@@ -1,12 +1,15 @@
 // Copyright 2025 the Deno authors. MIT license.
 
 import type { DayReport, SingleResult, TestReport } from "util/types.ts";
+import { splitTestNamesByCategory } from "util/category.ts";
 import { DenoVersion } from "components/DenoVersion.tsx";
+
+const TEST_NAME_COLSPAN = 2;
 
 export function ReportTable(props: { class?: string; report: DayReport }) {
   const { report } = props;
 
-  const testNames = getTestNames(report);
+  const testCategories = splitTestNamesByCategory(getTestNames(report));
   const nodeVersion = getNodeVersion(report);
 
   return (
@@ -14,54 +17,84 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
       class={`border-collapse table-fixed ${props.class ?? ""}`}
     >
       <tr>
-        <th class="align-bottom" colSpan={2}>Test file</th>
+        <th class="align-bottom" colSpan={TEST_NAME_COLSPAN}></th>
         <th class="align-top">
           Linux<br />
-          <Summary report={report.linux} />
+          <Summary data={report.linux} />
           <br />
-          <p class="font-normal text-sm text-gray-700">
+          <p class="font-normal font-mono text-sm text-gray-700">
             rev <DenoVersion version={report.linux?.denoVersion} />
           </p>
         </th>
         <th>
           Windows<br />
-          <Summary report={report.windows} />
+          <Summary data={report.windows} />
           <br />
-          <p class="font-normal text-sm text-gray-700">
+          <p class="font-normal font-mono text-sm text-gray-700">
             rev <DenoVersion version={report.windows?.denoVersion} />
           </p>
         </th>
         <th>
           Darwin<br />
-          <Summary report={report.darwin} />
+          <Summary data={report.darwin} />
           <br />
-          <p class="font-normal text-sm text-gray-700">
+          <p class="font-normal font-mono text-sm text-gray-700">
             rev <DenoVersion version={report.darwin?.denoVersion} />
           </p>
         </th>
       </tr>
-      {testNames.map((testName) => {
-        const linux = report.linux?.results[testName];
-        const windows = report.windows?.results[testName];
-        const darwin = report.darwin?.results[testName];
-
+      {testCategories.map(([category, testNames]) => {
+        testNames.sort();
+        const linux = report.linux;
+        const windows = report.windows;
+        const darwin = report.darwin;
         return (
-          <tr key={testName} class="border-t border-gray-300 font-mono">
-            <td colSpan={2} class="text-xs py-1 whitespace-nowrap">
-              <a
-                href={`https://github.com/nodejs/node/blob/v${nodeVersion}/test/${testName}`}
-                class="hover:text-blue-500"
-                target="_blank"
+          <>
+            <tr class="text-center bg-gray-50 border-t border-gray-300">
+              <td
+                colSpan={TEST_NAME_COLSPAN}
+                class="text-sm font-bold text-left py-1 px-3"
               >
-                {testName}
-              </a>
-            </td>
-            {[linux, windows, darwin].map((result) => (
-              <td class="text-center">
-                <Result result={result} />
+                {category}
               </td>
-            ))}
-          </tr>
+              <td>
+                <Summary data={getRateForSubset(linux, testNames)} />
+              </td>
+              <td>
+                <Summary data={getRateForSubset(windows, testNames)} />
+              </td>
+              <td>
+                <Summary data={getRateForSubset(darwin, testNames)} />
+              </td>
+            </tr>
+            {testNames.map((testName) => {
+              const linux = report.linux?.results[testName];
+              const windows = report.windows?.results[testName];
+              const darwin = report.darwin?.results[testName];
+
+              return (
+                <tr key={testName} class="border-t border-gray-300 font-mono">
+                  <td
+                    colSpan={TEST_NAME_COLSPAN}
+                    class="text-xs py-1 whitespace-nowrap"
+                  >
+                    <a
+                      href={`https://github.com/nodejs/node/blob/v${nodeVersion}/test/${testName}`}
+                      class="hover:text-blue-500"
+                      target="_blank"
+                    >
+                      {testName}
+                    </a>
+                  </td>
+                  {[linux, windows, darwin].map((result) => (
+                    <td class="text-center">
+                      <Result result={result} />
+                    </td>
+                  ))}
+                </tr>
+              );
+            })}
+          </>
         );
       })}
     </table>
@@ -122,18 +155,39 @@ function Tooltip(props: { text: string }) {
   );
 }
 
-function Summary(props: { report: TestReport | undefined }) {
-  if (!props.report) {
+function Summary(
+  props: { data: { pass: number; total: number } | undefined },
+) {
+  if (!props.data) {
     return (
-      <span class="font-normal text-sm text-gray-700">
+      <span class="font-normal font-mono text-sm text-gray-700">
         N/A
       </span>
     );
   }
-  const { total, pass } = props.report;
+  const { total, pass } = props.data;
   return (
-    <span class="font-normal text-sm text-gray-700">
+    <span class="font-normal font-mono text-sm text-gray-700">
       {pass}/{total} ({(pass / total * 100).toFixed(2)}%)
     </span>
   );
+}
+
+function getRateForSubset(
+  report: TestReport | undefined,
+  subset: string[],
+): { pass: number; total: number } | undefined {
+  if (!report) {
+    return undefined;
+  }
+  const results = report.results;
+  const total = subset.length;
+  let pass = 0;
+  for (const testName of subset) {
+    const result = results[testName];
+    if (result && result[0]) {
+      pass++;
+    }
+  }
+  return { pass, total };
 }

@@ -8,6 +8,7 @@ import type {
   TestReport,
   TestReportMetadata,
 } from "./types.ts";
+
 import { WeakValueMap } from "@kt3k/weak-value-map";
 import { maxBy } from "@std/collections/max-by";
 
