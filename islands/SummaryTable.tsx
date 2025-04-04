@@ -8,7 +8,7 @@ const platforms = [
   "darwin",
 ] as const;
 
-export function DailyTable(
+export function SummaryTable(
   props: { class?: string; summary: MonthSummary },
 ) {
   const reports = Object.entries(props.summary.reports).sort(

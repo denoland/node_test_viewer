@@ -3,7 +3,7 @@
 import { define } from "util/fresh.ts";
 import { DenoVersion } from "../components/DenoVersion.tsx";
 import { Chart } from "islands/Chart.tsx";
-import { DailyTable } from "islands/DailyTable.tsx";
+import { SummaryTable } from "../islands/SummaryTable.tsx";
 import { getLatestDaySummary, getSummaryForLatestMonth } from "util/report.ts";
 import { DaySummary } from "util/types.ts";
 
@@ -25,7 +25,7 @@ export default define.page<typeof handler>(function (props) {
           <Chart summary={monthSummary} class="w-4/5 h-[200px]" />
         </div>
         <div class="mt-10">
-          <DailyTable
+          <SummaryTable
             class="mx-auto w-4/5"
             summary={monthSummary}
           />
