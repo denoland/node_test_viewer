@@ -14,7 +14,7 @@
     "jsr:@std/encoding@1": "1.0.8",
     "jsr:@std/encoding@^1.0.5": "1.0.8",
     "jsr:@std/fmt@1": "1.0.6",
-    "jsr:@std/fs@1": "1.0.14",
+    "jsr:@std/fs@1": "1.0.15",
     "jsr:@std/html@1": "1.0.3",
     "jsr:@std/jsonc@1": "1.0.1",
     "jsr:@std/media-types@1": "1.1.0",
@@ -104,8 +104,8 @@
     "@std/fmt@1.0.6": {
       "integrity": "a2c56a69a2369876ddb3ad6a500bb6501b5bad47bb3ea16bfb0c18974d2661fc"
     },
-    "@std/fs@1.0.14": {
-      "integrity": "1e84bf0b95fe08f41f1f4aea9717bbf29f45408a56ce073b0114474ce1c9fccf",
+    "@std/fs@1.0.15": {
+      "integrity": "c083fb479889d6440d768e498195c3fc499d426fbf9a6592f98f53884d1d3f41",
       "dependencies": [
         "jsr:@std/path@^1.0.8"
       ]
@@ -1260,7 +1260,9 @@
   },
   "remote": {
     "https://cdn.skypack.dev/-/apexcharts@v3.26.1-JfauDUVk6IgccJUyzphD/dist=es2020,mode=imports,min/optimized/apexcharts.js": "bedd66203e7fbaeb67d0aa2d3adf89f7df9f900d0fd3a53e407de5c91b15e32b",
-    "https://cdn.skypack.dev/pin/apexcharts@v3.26.1-JfauDUVk6IgccJUyzphD/mode=imports,min/optimized/apexcharts.js": "be0a8a9d17b2a15088a2b90db73e68b1e021dba94e3c2925ffc357b9545f588c"
+    "https://cdn.skypack.dev/pin/apexcharts@v3.26.1-JfauDUVk6IgccJUyzphD/mode=imports,min/optimized/apexcharts.js": "be0a8a9d17b2a15088a2b90db73e68b1e021dba94e3c2925ffc357b9545f588c",
+    "https://esm.sh/apexcharts@4.5.0": "106943bf383734a8477dd04a1f91cebbf48d59555c89dcd3661520f22946dacc",
+    "https://esm.sh/apexcharts@4.5.0/denonext/apexcharts.mjs": "03b54e8f87cf166419042c8a383a1e6db808ca9bec65a8d23a84fd7758c79f34"
   },
   "workspace": {
     "dependencies": [

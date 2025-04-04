@@ -3,6 +3,7 @@
 import { define } from "util/fresh.ts";
 import { getReportForDate, isEmpty } from "util/report.ts";
 import { ReportTable } from "islands/ReportTable.tsx";
+import { ResultByCategoryChart } from "islands/ResultByCategoryChart.tsx";
 
 export const handler = define.handlers({
   async GET(ctx) {
@@ -31,6 +32,9 @@ export default define.page<typeof handler>((props) => {
         <h2 class="pt-6 pb-3 px-2 w-full sm:w-4/5 mx-auto text-xl border-b border-dashed">
           <span class="font-bold">Results</span> {report.date}
         </h2>
+      </div>
+      <div class="w-full sm:w-4/5 mx-auto h-[1400px]">
+        <ResultByCategoryChart report={report} />
       </div>
       <div class="w-full pt-4 pb-5 border-b border-dashed">
         <ReportTable class="mx-auto w-full sm:w-4/5" report={report} />

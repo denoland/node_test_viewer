@@ -18,6 +18,7 @@ export const categories = [
   "module",
   "net",
   "os",
+  "others",
   "path",
   "process",
   "promise",
@@ -40,7 +41,6 @@ export const categories = [
   "web",
   "worker",
   "zlib",
-  "others",
 ] as const;
 
 export type Category = typeof categories[number];
