@@ -67,9 +67,13 @@ function LatestResults(props: { summary: DaySummary | undefined }) {
             {item
               ? (
                 <>
-                  <div class="font-mono">
-                    {item.pass}/{item.total}{" "}
-                    ({(item.pass / item.total * 100).toFixed(2)}%)
+                  <div class="font-bold font-mono text-lg">
+                    <span class="underline decoration-dotted">
+                      {(item.pass / item.total * 100).toFixed(2)}%
+                    </span>
+                    <span class="text-gray-600 text-[smaller] ml-1">
+                      ({item.pass}/{item.total})
+                    </span>
                   </div>
                   <div class="text-sm font-mono text-gray-500">
                     rev <DenoVersion version={item?.denoVersion} />

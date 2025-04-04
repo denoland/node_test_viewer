@@ -20,7 +20,9 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
         <th class="align-bottom" colSpan={TEST_NAME_COLSPAN}></th>
         <th class="align-top">
           Linux<br />
-          <Summary data={report.linux} />
+          <span class="font-bold">
+            <Summary data={report.linux} />
+          </span>
           <br />
           <p class="font-normal font-mono text-sm text-gray-700">
             rev <DenoVersion version={report.linux?.denoVersion} />
@@ -28,7 +30,9 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
         </th>
         <th>
           Windows<br />
-          <Summary data={report.windows} />
+          <span class="font-bold">
+            <Summary data={report.windows} />
+          </span>
           <br />
           <p class="font-normal font-mono text-sm text-gray-700">
             rev <DenoVersion version={report.windows?.denoVersion} />
@@ -36,7 +40,9 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
         </th>
         <th>
           Darwin<br />
-          <Summary data={report.darwin} />
+          <span class="font-bold">
+            <Summary data={report.darwin} />
+          </span>
           <br />
           <p class="font-normal font-mono text-sm text-gray-700">
             rev <DenoVersion version={report.darwin?.denoVersion} />
@@ -58,13 +64,19 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
                 {category}
               </td>
               <td>
-                <Summary data={getRateForSubset(linux, testNames)} />
+                <span class="text-sm">
+                  <Summary data={getRateForSubset(linux, testNames)} />
+                </span>
               </td>
               <td>
-                <Summary data={getRateForSubset(windows, testNames)} />
+                <span class="text-sm">
+                  <Summary data={getRateForSubset(windows, testNames)} />
+                </span>
               </td>
               <td>
-                <Summary data={getRateForSubset(darwin, testNames)} />
+                <span class="text-sm">
+                  <Summary data={getRateForSubset(darwin, testNames)} />
+                </span>
               </td>
             </tr>
             {testNames.map((testName) => {
@@ -167,8 +179,11 @@ function Summary(
   }
   const { total, pass } = props.data;
   return (
-    <span class="font-normal font-mono text-sm text-gray-700">
-      {pass}/{total} ({(pass / total * 100).toFixed(2)}%)
+    <span class="font-mono">
+      <span class="underline decoration-dotted">
+        {(pass / total * 100).toFixed(2)}%
+      </span>
+      <span class="text-gray-600 text-[smaller] ml-1">({pass}/{total})</span>
     </span>
   );
 }
