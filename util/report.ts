@@ -167,3 +167,11 @@ export function getLatestDaySummary(
     (summary) => new Date(summary.date).getTime(),
   );
 }
+
+export function isEmpty(report: DayReport) {
+  return (
+    !report.windows &&
+    !report.linux &&
+    !report.darwin
+  );
+}

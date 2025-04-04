@@ -17,7 +17,6 @@ export const handler = define.handlers({
 
 export default define.page<typeof handler>(function (props) {
   const { monthSummary, daySummary } = props.data;
-  console.log("summary", monthSummary);
   return (
     <>
       <LatestResults summary={daySummary} />
