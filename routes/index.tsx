@@ -22,11 +22,11 @@ export default define.page<typeof handler>(function (props) {
       <LatestResults summary={daySummary} />
       <div class="pt-10 pb-5 border-b border-dashed">
         <div class="w-full flex justify-center">
-          <Chart summary={monthSummary} class="w-4/5 h-[200px]" />
+          <Chart summary={monthSummary} class="w-full sm:w-4/5 h-[200px]" />
         </div>
         <div class="mt-10">
           <SummaryTable
-            class="mx-auto w-4/5"
+            class="mx-auto w-full sm:w-4/5"
             summary={monthSummary}
           />
         </div>
@@ -44,12 +44,12 @@ function LatestResults(props: { summary: DaySummary | undefined }) {
   ] as const;
   return (
     <div class="w-full pt-10 pb-5 border-b border-dashed">
-      <div class="px-10 text-sm text-gray-500">
+      <div class="px-2 sm:px-10 text-sm text-gray-500">
         This page tracks the ratio of passed Node test cases with{" "}
         <a href="https://github.com/denoland/deno" target="_blank">Deno</a>{" "}
         runtime
       </div>
-      <h2 class="px-10">
+      <h2 class="px-2 sm:px-10">
         <span class="font-bold text-xl">Latest results</span> ({date
           ? (
             <a class="text-blue-500" href={"/results/" + date}>
@@ -71,12 +71,12 @@ function LatestResults(props: { summary: DaySummary | undefined }) {
                     <span class="underline decoration-dotted">
                       {(item.pass / item.total * 100).toFixed(2)}%
                     </span>
-                    <span class="text-gray-600 text-[smaller] ml-1">
+                    <span class="text-gray-600 hidden sm:inline text-[smaller] ml-1">
                       ({item.pass}/{item.total})
                     </span>
                   </div>
                   <div class="text-sm font-mono text-gray-500">
-                    rev <DenoVersion version={item?.denoVersion} />
+                    <DenoVersion version={item?.denoVersion} />
                   </div>
                 </>
               )

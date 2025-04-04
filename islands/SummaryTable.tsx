@@ -54,8 +54,10 @@ function TableRow(props: { date: string; summary: DaySummary }) {
           {report
             ? (
               <span>
-                {report.pass}/{report.total}{" "}
-                ({(report.pass / report.total * 100).toFixed(2)}%)
+                <span>{(report.pass / report.total * 100).toFixed(2)}%</span>
+                <span class="hidden sm:inline">
+                  ({report.pass}/{report.total})
+                </span>
               </span>
             )
             : <span class="text-gray-400">N/A</span>}

@@ -15,7 +15,6 @@ export default function App({ Component }: PageProps) {
       <body>
         <div class="w-full">
           <Header />
-
           <Component />
           <Footer />
         </div>
@@ -26,7 +25,7 @@ export default function App({ Component }: PageProps) {
 
 function Header() {
   return (
-    <div class="w-full flex justify-between items-center px-7 py-3 border-b border-dashed">
+    <div class="w-full flex justify-between items-center px-2 sm:px-7 py-3 border-b border-dashed">
       <h1 class="text-md font-semibold">
         <a href="/">
           <img class="h-8 inline mr-1" src="/node-deno.svg" /> Node test viewer
