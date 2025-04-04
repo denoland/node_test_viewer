@@ -31,7 +31,17 @@ export function SummaryTable(
 }
 
 function TableRow(props: { date: string; summary: DaySummary }) {
-  const open = () => globalThis.open("/results/" + props.date, "_blank");
+  const open = (e: MouseEvent) => {
+    if (e.ctrlKey || e.metaKey) {
+      globalThis.open(
+        "/results/" + props.date,
+        "_blank",
+        "noopener,noreferrer",
+      );
+    } else {
+      location.href = "/results/" + props.date;
+    }
+  };
 
   return (
     <tr
@@ -40,7 +50,7 @@ function TableRow(props: { date: string; summary: DaySummary }) {
     >
       <td class="text-center py-1 text-blue-500">{props.date}</td>
       {platforms.map((os) => props.summary[os]).map((report, i) => (
-        <td key={i} class="py-1 text-center">
+        <td key={i} class="py-1 text-center font-mono">
           {report
             ? (
               <span>
