@@ -32,5 +32,3 @@ jobs:
           project: "node-test-viewer"
           entrypoint: "main.ts"
           root: "."
-          
-          
