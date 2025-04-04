@@ -2,7 +2,7 @@
 
 import { addSummaryForDate } from "util/report.ts";
 
-const monthSummary = await addSummaryForDate("2025-04-03");
+const monthSummary = await addSummaryForDate("2025-04-04");
 console.log(monthSummary);
 
 const file = await Deno.open("summary-2025-04.json.gz", {
