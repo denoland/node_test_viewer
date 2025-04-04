@@ -88,7 +88,7 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
                 <tr key={testName} class="border-t border-gray-300 font-mono">
                   <td
                     colSpan={TEST_NAME_COLSPAN}
-                    class="text-xs py-1 whitespace-nowrap"
+                    class="text-xs py-1 whitespace-nowrap overflow-scroll px-1"
                   >
                     <a
                       href={`https://github.com/nodejs/node/blob/v${nodeVersion}/test/${testName}`}
@@ -183,7 +183,9 @@ function Summary(
       <span class="underline decoration-dotted">
         {(pass / total * 100).toFixed(2)}%
       </span>
-      <span class="text-gray-600 text-[smaller] ml-1">({pass}/{total})</span>
+      <span class="text-gray-600 text-xs sm:text-[smaller] ml-1">
+        ({pass}/{total})
+      </span>
     </span>
   );
 }

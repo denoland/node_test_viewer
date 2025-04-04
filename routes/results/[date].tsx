@@ -25,15 +25,15 @@ export default define.page<typeof handler>((props) => {
   return (
     <>
       <div class="w-full">
-        <p class="pt-3 px-10">
+        <p class="pt-3 px-2 sm:px-10">
           <a href="/" class="text-blue-500">&laquo; Back</a>
         </p>
-        <h2 class="pt-6 pb-3 w-4/5 mx-auto text-xl border-b border-dashed">
+        <h2 class="pt-6 pb-3 px-2 w-full sm:w-4/5 mx-auto text-xl border-b border-dashed">
           <span class="font-bold">Results</span> {report.date}
         </h2>
       </div>
       <div class="w-full pt-4 pb-5 border-b border-dashed">
-        <ReportTable class="mx-auto w-4/5" report={report} />
+        <ReportTable class="mx-auto w-full sm:w-4/5" report={report} />
       </div>
     </>
   );
