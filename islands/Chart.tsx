@@ -67,11 +67,7 @@ export function Chart(props: { class?: string; summary: MonthSummary }) {
             data: darwinData,
           },
         ],
-        xaxis: {
-          type: "datetime",
-          min: Math.floor(new Date("2025-04-02").getTime() / DAY) * DAY,
-          max: Math.floor(Date.now() / DAY) * DAY,
-        },
+        xaxis: { type: "datetime" },
         yaxis: {
           min: 0,
           max: 4000,
