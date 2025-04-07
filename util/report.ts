@@ -98,7 +98,7 @@ function extractMetadata(
 }
 
 /** Gets the report summary for the given date. */
-export async function getSummaryForDate(date: string): Promise<DaySummary> {
+export async function getDaySummary(date: string): Promise<DaySummary> {
   const reports = await getReportForDate(date);
   return {
     date,
@@ -108,7 +108,9 @@ export async function getSummaryForDate(date: string): Promise<DaySummary> {
   };
 }
 
-async function fetchSummaryForMonth(month: string): Promise<MonthSummary> {
+export async function fetchMonthSummary(
+  month: string,
+): Promise<MonthSummary> {
   console.log("fetching", month);
   const res = await fetch(
     `https://dl.deno.land/node-compat-test/summary-${month}.json.gz`,
@@ -116,10 +118,15 @@ async function fetchSummaryForMonth(month: string): Promise<MonthSummary> {
   if (res.status === 404) {
     return { reports: {}, month };
   }
-  const summary = await toJson(
-    res.body!.pipeThrough(new DecompressionStream("gzip")),
-  );
-  return summary as MonthSummary;
+  try {
+    const summary = await toJson(
+      res.body!.pipeThrough(new DecompressionStream("gzip")),
+    );
+    return summary as MonthSummary;
+  } catch (e) {
+    console.error(e);
+    return { reports: {}, month };
+  }
 }
 
 export async function getSummaryForMonth(
@@ -127,7 +134,7 @@ export async function getSummaryForMonth(
 ): Promise<MonthSummary> {
   let summary = summaryCache.get(month);
   if (!summary) {
-    summary = await fetchSummaryForMonth(month);
+    summary = await fetchMonthSummary(month);
     summaryCache.set(month, summary);
   } else {
     console.log("cache hit", month);
@@ -152,10 +159,11 @@ export async function getSummaryForLatestMonth(): Promise<MonthSummary> {
   return await getSummaryForMonth(prevMonth);
 }
 
-export async function addSummaryForDate(date: string) {
-  const month = date.slice(0, 7);
-  const monthSummary = await getSummaryForMonth(month);
-  const dateSummary = await getSummaryForDate(date);
+export async function addDaySummaryByDate(
+  monthSummary: MonthSummary,
+  date: string,
+) {
+  const dateSummary = await getDaySummary(date);
   monthSummary.reports[date] = dateSummary;
   // sort the reports by date
   const reports = Object.entries(monthSummary.reports).sort(
