@@ -157,6 +157,11 @@ export async function addSummaryForDate(date: string) {
   const monthSummary = await getSummaryForMonth(month);
   const dateSummary = await getSummaryForDate(date);
   monthSummary.reports[date] = dateSummary;
+  // sort the reports by date
+  const reports = Object.entries(monthSummary.reports).sort(
+    ([a], [b]) => new Date(a).getTime() - new Date(b).getTime(),
+  );
+  monthSummary.reports = Object.fromEntries(reports);
   return monthSummary;
 }
 
