@@ -4,6 +4,7 @@ import type { DayReport, SingleResult, TestReport } from "util/types.ts";
 import {} from "util/report.ts";
 import { splitTestNamesByCategory } from "util/category.ts";
 import { DenoVersion } from "components/DenoVersion.tsx";
+import { ComponentChildren } from "preact";
 
 const TEST_NAME_COLSPAN = 2;
 
@@ -139,7 +140,14 @@ function Result(
     if ("code" in error) {
       return (
         <span class="text-red-500 relative group">
-          FAIL<Tooltip text={error.stderr} />
+          FAIL<Tooltip
+            text={error.stderr.trim() || (
+              <span class="italic">
+                Empty stderr output from the test run<br />
+                Process exit code: {error.code}
+              </span>
+            )}
+          />
         </span>
       );
     } else if ("timeout" in error) {
@@ -160,7 +168,7 @@ function Result(
   return <span class="text-gray-400">INVL</span>;
 }
 
-function Tooltip(props: { text: string }) {
+function Tooltip(props: { text: ComponentChildren }) {
   return (
     <pre class="absolute w-[50vw] top-[18px] left-1/2 translate-x-[-65%] overflow-scroll px-4 py-2 text-xs font-mono text-left hidden group-hover:block text-white bg-gray-800 border border-gray-900 rounded shadow-lg z-10">
       {props.text}
