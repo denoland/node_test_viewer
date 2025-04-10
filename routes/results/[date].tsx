@@ -1,13 +1,28 @@
 // Copyright 2025 the Deno authors. MIT license.
 
 import { define } from "util/fresh.ts";
-import { getReportForDate, isEmpty } from "util/report.ts";
+import {
+  getLatestDaySummary,
+  getReportForDate,
+  getSummaryForLatestMonth,
+  isEmpty,
+} from "util/report.ts";
 import { ReportTable } from "islands/ReportTable.tsx";
 import { ResultByCategoryChart } from "islands/ResultByCategoryChart.tsx";
 
 export const handler = define.handlers({
   async GET(ctx) {
-    const { date } = ctx.params;
+    let { date } = ctx.params;
+
+    if (date === "latest") {
+      const monthSummary = await getSummaryForLatestMonth();
+      const daySummary = getLatestDaySummary(monthSummary);
+      if (!daySummary) {
+        return { data: { report: null } };
+      }
+      date = daySummary.date;
+    }
+
     const report = await getReportForDate(date);
 
     return {
@@ -19,8 +34,14 @@ export const handler = define.handlers({
 /** This page displays the results for a specific date. */
 export default define.page<typeof handler>((props) => {
   const { report } = props.data;
-  if (isEmpty(report)) {
-    return <div>Page not found</div>;
+  if (!report || isEmpty(report)) {
+    return (
+      <div class="w-full border-b border-dashed">
+        <div class="px-2 py-6 sm:w-4/5 mx-auto">
+          404 Page not found
+        </div>
+      </div>
+    );
   }
 
   return (
