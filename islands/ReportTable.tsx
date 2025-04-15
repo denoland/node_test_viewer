@@ -13,6 +13,7 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
 
   const testCategories = splitTestNamesByCategory(getTestNames(report));
   const nodeVersion = getNodeVersion(report);
+  const date = report.date;
 
   return (
     <table
@@ -21,7 +22,8 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
       <tr>
         <th class="align-bottom" colSpan={TEST_NAME_COLSPAN}></th>
         <th class="align-top">
-          Linux<br />
+          <a href={`${date}/linux.json`} target="_blank">Linux</a>
+          <br />
           <span class="font-bold">
             <Summary data={report.linux} />
           </span>
@@ -31,7 +33,8 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
           </p>
         </th>
         <th>
-          Windows<br />
+          <a href={`${date}/windows.json`} target="_blank">Windows</a>
+          <br />
           <span class="font-bold">
             <Summary data={report.windows} />
           </span>
@@ -41,7 +44,8 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
           </p>
         </th>
         <th>
-          Darwin<br />
+          <a href={`${date}/darwin.json`} target="_blank">Darwin</a>
+          <br />
           <span class="font-bold">
             <Summary data={report.darwin} />
           </span>
