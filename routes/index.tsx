@@ -4,30 +4,41 @@ import { define } from "util/fresh.ts";
 import { DenoVersion } from "../components/DenoVersion.tsx";
 import { Chart } from "islands/Chart.tsx";
 import { SummaryTable } from "../islands/SummaryTable.tsx";
-import { getLatestDaySummary, getSummaryForLatestMonth } from "util/report.ts";
+import {
+  getLatestDaySummary,
+  getSummariesForLatestMonths,
+} from "util/report.ts";
 import { DaySummary } from "util/types.ts";
 
 export const handler = define.handlers({
   async GET() {
-    const monthSummary = await getSummaryForLatestMonth();
+    const monthSummaries = await getSummariesForLatestMonths(2);
+    const monthSummary = monthSummaries[0];
+    const daySummaries = monthSummaries.reduce(
+      (acc, month) => Object.assign(acc, month.reports),
+      {} as Record<string, DaySummary>,
+    );
     const daySummary = getLatestDaySummary(monthSummary);
-    return { data: { monthSummary, daySummary } };
+    return { data: { daySummaries, monthSummary, daySummary } };
   },
 });
 
 export default define.page<typeof handler>(function (props) {
-  const { monthSummary, daySummary } = props.data;
+  const { monthSummary, daySummary, daySummaries } = props.data;
   return (
     <>
       <LatestResults summary={daySummary} />
       <div class="pt-10 pb-5 border-b border-dashed">
         <div class="w-full flex justify-center">
-          <Chart summary={monthSummary} class="w-full sm:w-4/5 h-[200px]" />
+          <Chart
+            summaryReports={daySummaries}
+            class="w-full sm:w-4/5 h-[200px]"
+          />
         </div>
         <div class="mt-10">
           <SummaryTable
             class="mx-auto w-full sm:w-4/5"
-            summary={monthSummary}
+            summaryReports={daySummaries}
           />
         </div>
       </div>

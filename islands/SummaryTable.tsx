@@ -1,6 +1,6 @@
 // Copyright 2025 the Deno authors. MIT license.
 
-import type { DaySummary, MonthSummary } from "util/types.ts";
+import type { DaySummary } from "util/types.ts";
 
 const platforms = [
   "linux",
@@ -9,9 +9,9 @@ const platforms = [
 ] as const;
 
 export function SummaryTable(
-  props: { class?: string; summary: MonthSummary },
+  props: { class?: string; summaryReports: Record<string, DaySummary> },
 ) {
-  const reports = Object.entries(props.summary.reports).sort(
+  const reports = Object.entries(props.summaryReports).sort(
     ([a], [b]) => new Date(b).getTime() - new Date(a).getTime(),
   );
 

@@ -129,7 +129,7 @@ export async function fetchMonthSummary(
   }
 }
 
-export async function getSummaryForMonth(
+export async function getMonthSummary(
   month: string,
 ): Promise<MonthSummary> {
   let summary = summaryCache.get(month);
@@ -142,21 +142,44 @@ export async function getSummaryForMonth(
   return summary;
 }
 
-export async function getSummaryForLatestMonth(): Promise<MonthSummary> {
+/** Get the month summary of the given month.
+ *
+ * The month 0 means this month, -1 means last month, -2 means the month before last month, etc.
+ */
+export async function getSummaryForMonth(month: number): Promise<MonthSummary> {
   const date = new Date();
-  const month = date.toISOString().slice(0, 7);
-  const summary = await getSummaryForMonth(month);
+  const monthName = new Date(
+    date.getFullYear(),
+    date.getMonth() + month,
+    15,
+  ).toISOString().slice(0, 7);
+  return await getMonthSummary(monthName);
+}
+
+export async function getSummaryForLatestMonth(): Promise<MonthSummary> {
+  const summary = await getSummaryForMonth(0);
 
   if (Object.keys(summary.reports).length > 0) {
     return summary;
   }
 
-  const prevMonth = new Date(
-    date.getFullYear(),
-    date.getMonth() - 1,
-    15,
-  ).toISOString().slice(0, 7);
-  return await getSummaryForMonth(prevMonth);
+  return await getSummaryForMonth(-1);
+}
+
+export async function getSummariesForLatestMonths(
+  n: number,
+): Promise<MonthSummary[]> {
+  const summaries = [];
+  for (let i = 0; i < 4; i++) {
+    const summary = await getSummaryForMonth(-i);
+    if (Object.keys(summary.reports).length > 0) {
+      summaries.push(summary);
+    }
+    if (summaries.length >= n) {
+      break;
+    }
+  }
+  return summaries;
 }
 
 export async function addDaySummaryByDate(

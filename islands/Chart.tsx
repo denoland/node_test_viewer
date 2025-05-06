@@ -2,7 +2,7 @@
 // @deno-types=https://cdn.skypack.dev/-/apexcharts@v3.26.1-JfauDUVk6IgccJUyzphD/dist=es2020,mode=types/types/apexcharts.d.ts
 
 import { useEffect, useRef } from "preact/hooks";
-import { MonthSummary } from "util/types.ts";
+import { DaySummary } from "util/types.ts";
 
 const DAY = 24 * 60 * 60 * 1000;
 
@@ -13,19 +13,21 @@ export const xaxis = {
 
 const extractData = (
   os: "linux" | "windows" | "darwin",
-  summary: MonthSummary,
+  summaryReports: Record<string, DaySummary>,
 ) => {
-  const dates = Object.keys(summary.reports).sort();
+  const dates = Object.keys(summaryReports).sort();
   const data = dates
-    .filter((date) => summary.reports[date][os])
+    .filter((date) => summaryReports[date][os])
     .map((date) => {
-      const report = summary.reports[date][os]!;
+      const report = summaryReports[date][os]!;
       return [new Date(report.date), report.pass];
     });
   return data;
 };
 
-export function Chart(props: { class?: string; summary: MonthSummary }) {
+export function Chart(
+  props: { class?: string; summaryReports: Record<string, DaySummary> },
+) {
   const chartRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     let chart: ApexCharts | undefined;
@@ -34,9 +36,9 @@ export function Chart(props: { class?: string; summary: MonthSummary }) {
         "https://cdn.skypack.dev/pin/apexcharts@v3.26.1-JfauDUVk6IgccJUyzphD/mode=imports,min/optimized/apexcharts.js"
       );
 
-      const linuxData = extractData("linux", props.summary);
-      const windowsData = extractData("windows", props.summary);
-      const darwinData = extractData("darwin", props.summary);
+      const linuxData = extractData("linux", props.summaryReports);
+      const windowsData = extractData("windows", props.summaryReports);
+      const darwinData = extractData("darwin", props.summaryReports);
 
       const chart = new ApexCharts(chartRef.current!, {
         chart: {
