@@ -5,6 +5,7 @@ import {} from "util/report.ts";
 import { splitTestNamesByCategory } from "util/category.ts";
 import { DenoVersion } from "components/DenoVersion.tsx";
 import { ComponentChildren } from "preact";
+import { useState } from "preact/hooks";
 
 const TEST_NAME_COLSPAN = 2;
 
@@ -94,15 +95,18 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
                 <tr key={testName} class="border-t border-gray-300 font-mono">
                   <td
                     colSpan={TEST_NAME_COLSPAN}
-                    class="text-xs py-1 whitespace-nowrap overflow-scroll px-1"
+                    class="text-xs py-1 whitespace-nowrap px-1"
                   >
-                    <a
-                      href={`https://github.com/nodejs/node/blob/v${nodeVersion}/test/${testName}`}
-                      class="hover:text-blue-500"
-                      target="_blank"
-                    >
-                      {testName}
-                    </a>
+                    <span class="relative group">
+                      <a
+                        href={`https://github.com/nodejs/node/blob/v${nodeVersion}/test/${testName}`}
+                        class="hover:text-blue-500 relative group"
+                        target="_blank"
+                      >
+                        {testName}
+                      </a>
+                      <CommandTooltip path={testName} />
+                    </span>
                   </td>
                   {[linux, windows, darwin].map((result) => (
                     <td class="text-center">
@@ -172,11 +176,39 @@ function Result(
   return <span class="text-gray-400">INVL</span>;
 }
 
-function Tooltip(props: { text: ComponentChildren }) {
+function Tooltip(props: { text: ComponentChildren; class?: string }) {
   return (
     <pre class="absolute w-[50vw] top-[18px] left-1/2 translate-x-[-65%] overflow-scroll px-4 py-2 text-xs font-mono text-left hidden group-hover:block text-white bg-gray-800 border border-gray-900 rounded shadow-lg z-10">
       {props.text}
     </pre>
+  );
+}
+function CommandTooltip(props: { path: string; useNodeTest?: boolean }) {
+  const [copied, setCopied] = useState(false);
+  const command =
+    `NODE_TEST_KNOWN_GLOBALS=0 NODE_SKIP_FLAG_CHECK=1 deno run -A --unstable-bare-node-builtins --unstable-node-globals --unstable-detect-cjs --quiet tests/node_compat/runner/suite/test/${props.path}`;
+  const copy = () => {
+    navigator.clipboard.writeText(command);
+    setCopied(true);
+    setTimeout(() => {
+      setCopied(false);
+    }, 2000);
+  };
+  return (
+    <div class="absolute w-[50vw] top-[14px] left-0 overflow-scroll px-4 py-3 text-xs font-mono text-left hidden group-hover:block text-white bg-gray-800 border border-gray-900 rounded shadow-lg z-10">
+      You can run this test with the command below (<button
+        type="button"
+        onClick={copy}
+        class="text-blue-500"
+      >
+        {copied ? "Copied!" : "Click to copy"}
+      </button>):
+      <br />
+      <br />
+      <pre class="font-mono">
+        <code class="text-gray-200">{command}</code>
+      </pre>
+    </div>
   );
 }
 
