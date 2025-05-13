@@ -20,49 +20,51 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
     <table
       class={`border-collapse table-fixed ${props.class ?? ""}`}
     >
-      <tr>
-        <th class="align-bottom" colSpan={TEST_NAME_COLSPAN}></th>
-        <th class="align-top">
-          <a href={`${date}/linux.json`} target="_blank">Linux</a>
-          <br />
-          <span class="font-bold">
-            <Summary data={report.linux} />
-          </span>
-          <br />
-          <p class="font-normal font-mono text-sm text-gray-700">
-            rev <DenoVersion version={report.linux?.denoVersion} />
-          </p>
-        </th>
-        <th>
-          <a href={`${date}/windows.json`} target="_blank">Windows</a>
-          <br />
-          <span class="font-bold">
-            <Summary data={report.windows} />
-          </span>
-          <br />
-          <p class="font-normal font-mono text-sm text-gray-700">
-            rev <DenoVersion version={report.windows?.denoVersion} />
-          </p>
-        </th>
-        <th>
-          <a href={`${date}/darwin.json`} target="_blank">Darwin</a>
-          <br />
-          <span class="font-bold">
-            <Summary data={report.darwin} />
-          </span>
-          <br />
-          <p class="font-normal font-mono text-sm text-gray-700">
-            rev <DenoVersion version={report.darwin?.denoVersion} />
-          </p>
-        </th>
-      </tr>
+      <thead>
+        <tr>
+          <th class="align-bottom" colSpan={TEST_NAME_COLSPAN}></th>
+          <th class="align-top">
+            <a href={`${date}/linux.json`} target="_blank">Linux</a>
+            <br />
+            <span class="font-bold">
+              <Summary data={report.linux} />
+            </span>
+            <br />
+            <p class="font-normal font-mono text-sm text-gray-700">
+              rev <DenoVersion version={report.linux?.denoVersion} />
+            </p>
+          </th>
+          <th>
+            <a href={`${date}/windows.json`} target="_blank">Windows</a>
+            <br />
+            <span class="font-bold">
+              <Summary data={report.windows} />
+            </span>
+            <br />
+            <p class="font-normal font-mono text-sm text-gray-700">
+              rev <DenoVersion version={report.windows?.denoVersion} />
+            </p>
+          </th>
+          <th>
+            <a href={`${date}/darwin.json`} target="_blank">Darwin</a>
+            <br />
+            <span class="font-bold">
+              <Summary data={report.darwin} />
+            </span>
+            <br />
+            <p class="font-normal font-mono text-sm text-gray-700">
+              rev <DenoVersion version={report.darwin?.denoVersion} />
+            </p>
+          </th>
+        </tr>
+      </thead>
       {testCategories.map(([category, testNames]) => {
         testNames.sort();
         const linux = report.linux;
         const windows = report.windows;
         const darwin = report.darwin;
         return (
-          <>
+          <tbody key={category}>
             <tr class="text-center bg-gray-50 border-t border-gray-300">
               <td
                 colSpan={TEST_NAME_COLSPAN}
@@ -116,7 +118,7 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
                 </tr>
               );
             })}
-          </>
+          </tbody>
         );
       })}
     </table>
