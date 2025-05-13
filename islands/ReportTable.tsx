@@ -95,12 +95,12 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
                 <tr key={testName} class="border-t border-gray-300 font-mono">
                   <td
                     colSpan={TEST_NAME_COLSPAN}
-                    class="text-xs py-1 whitespace-nowrap px-1"
+                    class="text-xs py-1 whitespace-nowrap sm:overflow-visible overflow-scroll px-1"
                   >
-                    <span class="relative group">
+                    <span class="relative sm:group">
                       <a
                         href={`https://github.com/nodejs/node/blob/v${nodeVersion}/test/${testName}`}
-                        class="hover:text-blue-500 relative group"
+                        class="hover:text-blue-500"
                         target="_blank"
                       >
                         {testName}
