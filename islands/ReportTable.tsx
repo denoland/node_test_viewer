@@ -94,12 +94,15 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
               const darwin = report.darwin?.results[testName];
 
               return (
-                <tr key={testName} class="border-t border-gray-300 font-mono">
+                <tr
+                  key={testName}
+                  class="border-t border-gray-300 font-mono"
+                >
                   <td
                     colSpan={TEST_NAME_COLSPAN}
                     class="text-xs py-1 whitespace-nowrap sm:overflow-visible overflow-scroll px-1"
                   >
-                    <span class="relative sm:group">
+                    <span class="relative group">
                       <a
                         href={`https://github.com/nodejs/node/blob/v${nodeVersion}/test/${testName}`}
                         class="hover:text-blue-500"
@@ -107,7 +110,9 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
                       >
                         {testName}
                       </a>
-                      <CommandTooltip path={testName} />
+                      <div class="sm:block hidden">
+                        <CommandTooltip path={testName} />
+                      </div>
                     </span>
                   </td>
                   {[linux, windows, darwin].map((result) => (
