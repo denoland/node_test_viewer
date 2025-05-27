@@ -24,7 +24,8 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
         <tr>
           <th class="align-bottom" colSpan={TEST_NAME_COLSPAN}></th>
           <th class="align-top">
-            <a href={`${date}/linux.json`} target="_blank">Linux</a>
+            Linux
+            <LinkToJsonAndErrors date={date} os="linux" />
             <br />
             <span class="font-bold">
               <Summary data={report.linux} />
@@ -35,7 +36,8 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
             </p>
           </th>
           <th>
-            <a href={`${date}/windows.json`} target="_blank">Windows</a>
+            Windows
+            <LinkToJsonAndErrors date={date} os="windows" />
             <br />
             <span class="font-bold">
               <Summary data={report.windows} />
@@ -46,7 +48,8 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
             </p>
           </th>
           <th>
-            <a href={`${date}/darwin.json`} target="_blank">Darwin</a>
+            Darwin
+            <LinkToJsonAndErrors date={date} os="darwin" />
             <br />
             <span class="font-bold">
               <Summary data={report.darwin} />
@@ -127,6 +130,30 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
         );
       })}
     </table>
+  );
+}
+
+function LinkToJsonAndErrors(
+  props: { date: string; os: "linux" | "windows" | "darwin" },
+) {
+  return (
+    <span class="ml-2 text-xs font-normal text-gray-500">
+      <a
+        class="text-blue-500"
+        href={`${props.date}/${props.os}.json`}
+        target="_blank"
+      >
+        json
+      </a>
+      ・
+      <a
+        class="text-blue-500"
+        href={`${props.date}/${props.os}.errors.txt`}
+        target="_blank"
+      >
+        errors
+      </a>
+    </span>
   );
 }
 
