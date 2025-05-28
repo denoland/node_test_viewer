@@ -4,6 +4,7 @@ import type { DayReport, SingleResult, TestReport } from "util/types.ts";
 import {} from "util/report.ts";
 import { splitTestNamesByCategory } from "util/category.ts";
 import { DenoVersion } from "components/DenoVersion.tsx";
+import { LinkToJsonAndErrors } from "components/LinkToJsonAndErrors.tsx";
 import { ComponentChildren } from "preact";
 import { useState } from "preact/hooks";
 
@@ -25,6 +26,7 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
           <th class="align-bottom" colSpan={TEST_NAME_COLSPAN}></th>
           <th class="align-top">
             Linux
+            <br class="inline sm:hidden" />
             <LinkToJsonAndErrors date={date} os="linux" />
             <br />
             <span class="font-bold">
@@ -37,6 +39,7 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
           </th>
           <th>
             Windows
+            <br class="inline sm:hidden" />
             <LinkToJsonAndErrors date={date} os="windows" />
             <br />
             <span class="font-bold">
@@ -49,6 +52,7 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
           </th>
           <th>
             Darwin
+            <br class="inline sm:hidden" />
             <LinkToJsonAndErrors date={date} os="darwin" />
             <br />
             <span class="font-bold">
@@ -130,30 +134,6 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
         );
       })}
     </table>
-  );
-}
-
-function LinkToJsonAndErrors(
-  props: { date: string; os: "linux" | "windows" | "darwin" },
-) {
-  return (
-    <span class="ml-2 text-xs font-normal text-gray-500">
-      <a
-        class="text-blue-500"
-        href={`${props.date}/${props.os}.json`}
-        target="_blank"
-      >
-        json
-      </a>
-      ・
-      <a
-        class="text-blue-500"
-        href={`${props.date}/${props.os}.errors.txt`}
-        target="_blank"
-      >
-        errors
-      </a>
-    </span>
   );
 }
 

@@ -1,9 +1,10 @@
 // Copyright 2025 the Deno authors. MIT license.
 
 import { define } from "util/fresh.ts";
-import { DenoVersion } from "../components/DenoVersion.tsx";
+import { DenoVersion } from "components/DenoVersion.tsx";
+import { LinkToJsonAndErrors } from "components/LinkToJsonAndErrors.tsx";
 import { Chart } from "islands/Chart.tsx";
-import { SummaryTable } from "../islands/SummaryTable.tsx";
+import { SummaryTable } from "islands/SummaryTable.tsx";
 import {
   getLatestDaySummary,
   getSummariesForLatestMonths,
@@ -74,6 +75,8 @@ function LatestResults(props: { summary: DaySummary | undefined }) {
           <div class="text-center" key={os}>
             <header class="font-semibold text-md capitalize">
               {os}
+              <br class="inline sm:hidden" />
+              <LinkToJsonAndErrors date="latest" os={os} />
             </header>
             {item
               ? (
