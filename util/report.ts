@@ -83,8 +83,17 @@ function extractMetadata(
   if (!report) {
     return undefined;
   }
-  const { date, denoVersion, os, arch, nodeVersion, runId, total, pass } =
-    report;
+  const {
+    date,
+    denoVersion,
+    os,
+    arch,
+    nodeVersion,
+    runId,
+    total,
+    pass,
+    ignore = 0,
+  } = report;
   return {
     date,
     denoVersion,
@@ -94,6 +103,7 @@ function extractMetadata(
     runId,
     total,
     pass,
+    ignore,
   };
 }
 

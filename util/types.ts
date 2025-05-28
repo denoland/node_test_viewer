@@ -1,9 +1,12 @@
 // Copyright 2025 the Deno authors. MIT license.
 
-export type SingleResult = [
-  pass: boolean,
-  error?: ErrorExit | ErrorTimeout | ErrorUnexpected,
-];
+export type SingleResult =
+  | [true]
+  | ["IGNORE"]
+  | [false, ErrorExit]
+  | [false, ErrorTimeout]
+  | [false, ErrorUnexpected];
+
 type ErrorExit = {
   code: number;
   stderr: string;
@@ -25,6 +28,7 @@ export type TestReportMetadata = {
   runId: string | null;
   total: number;
   pass: number;
+  ignore: number;
 };
 
 /** The test report format, which is stored in JSON file */

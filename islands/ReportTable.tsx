@@ -33,6 +33,7 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
               <Summary data={report.linux} />
             </span>
             <br />
+            <Ignored report={report.linux} />
             <p class="font-normal font-mono text-sm text-gray-700">
               rev <DenoVersion version={report.linux?.denoVersion} />
             </p>
@@ -46,6 +47,7 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
               <Summary data={report.windows} />
             </span>
             <br />
+            <Ignored report={report.linux} />
             <p class="font-normal font-mono text-sm text-gray-700">
               rev <DenoVersion version={report.windows?.denoVersion} />
             </p>
@@ -59,6 +61,7 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
               <Summary data={report.darwin} />
             </span>
             <br />
+            <Ignored report={report.linux} />
             <p class="font-normal font-mono text-sm text-gray-700">
               rev <DenoVersion version={report.darwin?.denoVersion} />
             </p>
@@ -137,6 +140,22 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
   );
 }
 
+function Ignored(props: { report: TestReport | undefined }) {
+  const { report } = props;
+  if (!report) {
+    return (
+      <span class="text-gray-500 text-sm font-normal">
+        N/A
+      </span>
+    );
+  }
+  return (
+    <span class="text-gray-500 text-sm font-normal">
+      {report?.ignore ?? 0} ignored
+    </span>
+  );
+}
+
 function getTestNames(report: DayReport) {
   const testReport = report.windows ?? report.linux ?? report.darwin;
   return Object.keys(testReport?.results ?? {});
@@ -154,8 +173,11 @@ function Result(
   if (!result) {
     return <span class="text-gray-400">N/A</span>;
   }
-  if (result[0]) {
+  if (result[0] === true) {
     return <span class="text-green-500">PASS</span>;
+  }
+  if (result[0] === "IGNORE") {
+    return <span class="text-gray-500">IGNORE</span>;
   }
   const error = result[1];
   if (error) {
@@ -280,13 +302,15 @@ function getRateForSubset(
     return undefined;
   }
   const results = report.results;
-  const total = subset.length;
   let pass = 0;
+  let fail = 0;
   for (const testName of subset) {
     const result = results[testName];
-    if (result && result[0]) {
+    if (result && result[0] === true) {
       pass++;
+    } else if (result && result[0] === false) {
+      fail++;
     }
   }
-  return { pass, total };
+  return { pass, total: pass + fail };
 }
