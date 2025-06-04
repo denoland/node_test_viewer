@@ -7,6 +7,7 @@ import {
   getSummaryForLatestMonth,
   isEmpty,
 } from "util/report.ts";
+import { categories } from "util/category.ts";
 import { ReportTable } from "islands/ReportTable.tsx";
 import { ResultByCategoryChart } from "islands/ResultByCategoryChart.tsx";
 
@@ -53,6 +54,20 @@ export default define.page<typeof handler>((props) => {
         <h2 class="pt-6 pb-3 px-2 w-full sm:w-4/5 mx-auto text-xl border-b border-dashed">
           <span class="font-bold">Results</span> {report.date}
         </h2>
+        <div class="py-3 px-2 mb-2 w-full sm:w-4/5 mx-auto text-xs border-b border-dashed flex flex-wrap">
+          {categories.map((category, i) => (
+            <>
+              {i > 0 && <span class="py-1 text-gray-400">|</span>}
+              <a
+                key={category}
+                class="text-blue-500 hover:underline px-2 py-1"
+                href={`#${category}`}
+              >
+                {category}
+              </a>
+            </>
+          ))}
+        </div>
       </div>
       <div class="w-full sm:w-4/5 mx-auto h-[1400px]">
         <ResultByCategoryChart report={report} />

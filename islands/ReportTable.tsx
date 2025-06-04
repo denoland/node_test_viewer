@@ -1,7 +1,6 @@
 // Copyright 2025 the Deno authors. MIT license.
 
 import type { DayReport, SingleResult, TestReport } from "util/types.ts";
-import {} from "util/report.ts";
 import { splitTestNamesByCategory } from "util/category.ts";
 import { DenoVersion } from "components/DenoVersion.tsx";
 import { LinkToJsonAndErrors } from "components/LinkToJsonAndErrors.tsx";
