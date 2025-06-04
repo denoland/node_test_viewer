@@ -183,7 +183,7 @@ function Result(
     if ("code" in error) {
       return (
         <span class="text-red-500 relative group">
-          FAIL<Tooltip
+          FAIL<ErrorTooltip
             text={error.stderr.trim() || (
               <span class="italic">
                 Empty stderr output from the test run<br />
@@ -196,13 +196,13 @@ function Result(
     } else if ("timeout" in error) {
       return (
         <span class="text-red-500 relative group">
-          T/O<Tooltip text={`Timed out after ${error.timeout}ms`} />
+          T/O<ErrorTooltip text={`Timed out after ${error.timeout}ms`} />
         </span>
       );
     } else if ("message" in error) {
       return (
         <span class="text-red-500 relative group">
-          FAIL<Tooltip text={error.message} />
+          FAIL<ErrorTooltip text={error.message} />
         </span>
       );
     }
@@ -211,7 +211,7 @@ function Result(
   return <span class="text-gray-400">INVL</span>;
 }
 
-function Tooltip(props: { text: ComponentChildren; class?: string }) {
+function ErrorTooltip(props: { text: ComponentChildren; class?: string }) {
   return (
     <pre class="absolute w-[50vw] top-[18px] left-1/2 translate-x-[-65%] overflow-scroll px-4 py-2 text-xs font-mono text-left hidden group-hover:block text-white bg-gray-800 border border-gray-900 rounded shadow-lg z-10">
       {props.text}
