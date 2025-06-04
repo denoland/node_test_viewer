@@ -5,7 +5,7 @@ import { splitTestNamesByCategory } from "util/category.ts";
 import { DenoVersion } from "components/DenoVersion.tsx";
 import { LinkToJsonAndErrors } from "components/LinkToJsonAndErrors.tsx";
 import { ComponentChildren } from "preact";
-import { useState } from "preact/hooks";
+import { useEffect, useState } from "preact/hooks";
 
 const TEST_NAME_COLSPAN = 2;
 
@@ -218,53 +218,86 @@ function Tooltip(props: { text: ComponentChildren; class?: string }) {
     </pre>
   );
 }
+
+function useCopyState(text: string) {
+  const [copied, setCopied] = useState(false);
+  const copy = () => {
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => {
+      setCopied(false);
+    }, 2000);
+  };
+  return [copied, copy] as const;
+}
+
 function CommandTooltip(props: { path: string; useNodeTest?: boolean }) {
-  const [copied0, setCopied0] = useState(false);
-  const [copied1, setCopied1] = useState(false);
+  const [useDev, setUseDev] = useState(false);
+  const denoPath = useDev ? "./target/debug/deno" : "deno";
   const command0 =
-    `NODE_TEST_KNOWN_GLOBALS=0 NODE_SKIP_FLAG_CHECK=1 deno run -A --unstable-bare-node-builtins --unstable-node-globals --unstable-detect-cjs --quiet tests/node_compat/runner/suite/test/${props.path}`;
-  const command1 = `./tools/node_compat_tests.js --filter ${props.path}`;
-  const copy0 = () => {
-    navigator.clipboard.writeText(command0);
-    setCopied0(true);
-    setTimeout(() => {
-      setCopied0(false);
-    }, 2000);
-  };
-  const copy1 = () => {
-    navigator.clipboard.writeText(command1);
-    setCopied1(true);
-    setTimeout(() => {
-      setCopied1(false);
-    }, 2000);
-  };
+    `NODE_TEST_KNOWN_GLOBALS=0 NODE_SKIP_FLAG_CHECK=1 ${denoPath} run -A --unstable-bare-node-builtins --unstable-node-globals --unstable-detect-cjs --quiet tests/node_compat/runner/suite/test/${props.path}`;
+  const command1 =
+    `${denoPath} -A ./tools/node_compat_tests.js --filter ${props.path}`;
+  const [copied0, copy0] = useCopyState(command0);
+  const [copied1, copy1] = useCopyState(command1);
+  const [pathCopied, copyPath] = useCopyState(props.path);
+  useEffect(() => {
+    if (localStorage["useDevDeno"] === "true") {
+      setUseDev(true);
+    }
+  }, []);
   return (
-    <div class="absolute w-[50vw] top-[14px] left-0 overflow-scroll px-4 py-3 text-xs font-mono text-left hidden group-hover:block text-white bg-gray-800 border border-gray-900 rounded shadow-lg z-10">
-      You can run this test with the command below (<button
-        type="button"
-        onClick={copy1}
-        class="text-blue-500"
-      >
-        {copied1 ? "Copied!" : "Click to copy"}
-      </button>):
-      <br />
-      <br />
-      <pre class="font-mono border border-gray-500 rounded px-4 py-2 overflow-scroll">
+    <div class="absolute w-[50vw] top-[14px] left-0 overflow-scroll py-3 text-xs font-mono text-left hidden group-hover:block bg-gray-100 border border-gray-300 rounded shadow-lg z-10">
+      <p class="px-4 text-right">
+        <label class="mx-4 inline-flex items-center">
+          <input
+            onChange={(e) => {
+              const checked = e.currentTarget.checked;
+              setUseDev(checked);
+              localStorage["useDevDeno"] = checked.toString();
+            }}
+            type="checkbox"
+            class="mr-2"
+            checked={useDev}
+          />
+          <span>Use dev build of Deno</span>
+        </label>
+      </p>
+      <p class="px-4">
+        You can run this test with the command below (<button
+          type="button"
+          onClick={copy1}
+          class="text-blue-500"
+        >
+          {copied1 ? "Copied!" : "Click to copy"}
+        </button>):
+      </p>
+      <pre class="mt-1 font-mono border-t border-b border-gray-300 bg-gray-700 px-4 py-2 overflow-scroll">
         <code class="text-gray-200">{command1}</code>
       </pre>
-      <br />
-      <br />
-      Or, without using wrapper script (<button
-        type="button"
-        onClick={copy0}
-        class="text-blue-500"
-      >
-        {copied0 ? "Copied!" : "Click to copy"}
-      </button>):
-      <br />
-      <br />
-      <pre class="font-mono border border-gray-500 rounded px-4 py-2 overflow-scroll">
+      <p class="mt-6 px-4">
+        Or, without using wrapper script (<button
+          type="button"
+          onClick={copy0}
+          class="text-blue-500"
+        >
+          {copied0 ? "Copied!" : "Click to copy"}
+        </button>):
+      </p>
+      <pre class="mt-1 font-mono border-t border-b border-gray-300 bg-gray-700 px-4 py-2 overflow-scroll">
         <code class="text-gray-200">{command0}</code>
+      </pre>
+      <p class="mt-6 px-4">
+        Copy the test name to clipboard (<button
+          type="button"
+          onClick={copyPath}
+          class="text-blue-500"
+        >
+          {pathCopied ? "Copied!" : "Click to copy"}
+        </button>)
+      </p>
+      <pre class="mt-1 font-mono border-t border-b border-gray-300 bg-gray-700 px-4 py-2 overflow-scroll">
+        <code class="text-gray-200">{props.path}</code>
       </pre>
     </div>
   );
