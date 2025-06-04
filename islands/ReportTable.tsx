@@ -80,6 +80,18 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
                 class="text-sm font-bold text-left py-1 px-3"
               >
                 {category}
+                <CopyFailedTestCasesButton
+                  tests={testNames.filter((testName) => {
+                    const linuxResult = linux?.results[testName];
+                    const windowsResult = windows?.results[testName];
+                    const darwinResult = darwin?.results[testName];
+                    return (
+                      (linuxResult && linuxResult[0] === false) ||
+                      (windowsResult && windowsResult[0] === false) ||
+                      (darwinResult && darwinResult[0] === false)
+                    );
+                  })}
+                />
               </td>
               <td>
                 <span class="text-sm">
@@ -345,4 +357,19 @@ function getRateForSubset(
     }
   }
   return { pass, total: pass + fail };
+}
+
+function CopyFailedTestCasesButton(props: { tests: string[] }) {
+  const [copied, copy] = useCopyState(
+    props.tests.join("\n"),
+  );
+  return (
+    <button
+      class="ml-2 text-xs font-normal text-gray-500 hover:underline"
+      onClick={copy}
+      type="button"
+    >
+      {copied ? "copied!" : "copy failed test case names"}
+    </button>
+  );
 }
