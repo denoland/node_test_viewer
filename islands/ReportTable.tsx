@@ -74,7 +74,7 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
         const windows = report.windows;
         const darwin = report.darwin;
         return (
-          <tbody key={category}>
+          <tbody key={category} id={category}>
             <tr class="text-center bg-gray-50 border-t border-gray-300">
               <td
                 colSpan={TEST_NAME_COLSPAN}
