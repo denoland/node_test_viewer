@@ -247,7 +247,7 @@ function CommandTooltip(props: { path: string; useNodeTest?: boolean }) {
     }
   }, []);
   return (
-    <div class="absolute w-[50vw] top-[14px] left-0 overflow-scroll py-3 text-xs font-mono text-left hidden group-hover:block bg-gray-100 border border-gray-300 rounded shadow-lg z-10">
+    <div class="absolute w-[50vw] top-[14px] -left-[25px] overflow-scroll pt-3 pb-5 text-xs font-mono text-left hidden group-hover:block bg-gray-100 border border-gray-500 rounded shadow-lg z-10">
       <p class="px-4 text-right">
         <label class="mx-4 inline-flex items-center">
           <input
@@ -272,7 +272,7 @@ function CommandTooltip(props: { path: string; useNodeTest?: boolean }) {
           {copied1 ? "Copied!" : "Click to copy"}
         </button>):
       </p>
-      <pre class="mt-1 font-mono border-t border-b border-gray-300 bg-gray-700 px-4 py-2 overflow-scroll">
+      <pre class="mt-1 font-mono bg-gray-700 px-4 py-2 overflow-scroll">
         <code class="text-gray-200">{command1}</code>
       </pre>
       <p class="mt-6 px-4">
@@ -284,7 +284,7 @@ function CommandTooltip(props: { path: string; useNodeTest?: boolean }) {
           {copied0 ? "Copied!" : "Click to copy"}
         </button>):
       </p>
-      <pre class="mt-1 font-mono border-t border-b border-gray-300 bg-gray-700 px-4 py-2 overflow-scroll">
+      <pre class="mt-1 font-mono bg-gray-700 px-4 py-2 overflow-scroll">
         <code class="text-gray-200">{command0}</code>
       </pre>
       <p class="mt-6 px-4">
@@ -296,7 +296,7 @@ function CommandTooltip(props: { path: string; useNodeTest?: boolean }) {
           {pathCopied ? "Copied!" : "Click to copy"}
         </button>)
       </p>
-      <pre class="mt-1 font-mono border-t border-b border-gray-300 bg-gray-700 px-4 py-2 overflow-scroll">
+      <pre class="mt-1 font-mono bg-gray-700 px-4 py-2 overflow-scroll">
         <code class="text-gray-200">{props.path}</code>
       </pre>
     </div>
