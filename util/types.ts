@@ -1,11 +1,15 @@
 // Copyright 2025 the Deno authors. MIT license.
 
+type SingleResultOption = {
+  usesNodeTest?: boolean;
+};
+
 export type SingleResult =
-  | [true]
-  | ["IGNORE"]
-  | [false, ErrorExit]
-  | [false, ErrorTimeout]
-  | [false, ErrorUnexpected];
+  | [true, null, SingleResultOption]
+  | ["IGNORE", null, SingleResultOption]
+  | [false, ErrorExit, SingleResultOption]
+  | [false, ErrorTimeout, SingleResultOption]
+  | [false, ErrorUnexpected, SingleResultOption];
 
 type ErrorExit = {
   code: number;

@@ -114,6 +114,10 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
               const windows = report.windows?.results[testName];
               const darwin = report.darwin?.results[testName];
 
+              const resultOption = linux?.[2] ??
+                windows?.[2] ??
+                darwin?.[2];
+
               return (
                 <tr
                   key={testName}
@@ -132,7 +136,10 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
                         {testName}
                       </a>
                       <div class="sm:block hidden">
-                        <CommandTooltip path={testName} />
+                        <CommandTooltip
+                          path={testName}
+                          useNodeTest={resultOption?.usesNodeTest}
+                        />
                       </div>
                     </span>
                   </td>
@@ -246,8 +253,9 @@ function useCopyState(text: string) {
 function CommandTooltip(props: { path: string; useNodeTest?: boolean }) {
   const [useDev, setUseDev] = useState(false);
   const denoPath = useDev ? "./target/debug/deno" : "deno";
+  const denoSubcommand = props.useNodeTest ? "test" : "run";
   const command0 =
-    `NODE_TEST_KNOWN_GLOBALS=0 NODE_SKIP_FLAG_CHECK=1 ${denoPath} run -A --unstable-bare-node-builtins --unstable-node-globals --unstable-detect-cjs --quiet tests/node_compat/runner/suite/test/${props.path}`;
+    `NODE_TEST_KNOWN_GLOBALS=0 NODE_SKIP_FLAG_CHECK=1 ${denoPath} ${denoSubcommand} -A --unstable-bare-node-builtins --unstable-node-globals --unstable-detect-cjs --quiet tests/node_compat/runner/suite/test/${props.path}`;
   const command1 =
     `${denoPath} -A ./tools/node_compat_tests.js --filter ${props.path}`;
   const [copied0, copy0] = useCopyState(command0);
