@@ -1,5 +1,6 @@
 // Copyright 2025 the Deno authors. MIT license.
 
+import { assertEquals } from "@std/assert";
 import { getTestCategory } from "./category.ts";
 
 Deno.test("getTestCategory()", () => {
@@ -12,11 +13,6 @@ Deno.test("getTestCategory()", () => {
   ];
 
   for (const [input, expected] of testCases) {
-    const result = getTestCategory(input);
-    if (result !== expected) {
-      throw new Error(
-        `Expected ${input} to be in category ${expected}, but got ${result}`,
-      );
-    }
+    assertEquals(getTestCategory(input), expected);
   }
 });
