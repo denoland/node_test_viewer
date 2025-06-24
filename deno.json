@@ -20,6 +20,7 @@
   "imports": {
     "@kt3k/weak-value-map": "jsr:@kt3k/weak-value-map@^0.1.2",
     "@std/assert": "jsr:@std/assert@^1.0.13",
+    "@std/async": "jsr:@std/async@^1.0.13",
     "@std/collections": "jsr:@std/collections@^1.0.10",
     "@std/streams": "jsr:@std/streams@^1.0.9",
     "fresh": "jsr:@fresh/core@^2.0.0-alpha.29",
