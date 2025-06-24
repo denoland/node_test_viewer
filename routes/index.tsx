@@ -13,7 +13,7 @@ import { DaySummary } from "util/types.ts";
 
 export const handler = define.handlers({
   async GET() {
-    const monthSummaries = await getSummariesForLatestMonths(2);
+    const monthSummaries = await getSummariesForLatestMonths(3);
     const monthSummary = monthSummaries[0];
     const daySummaries = monthSummaries.reduce(
       (acc, month) => Object.assign(acc, month.reports),
