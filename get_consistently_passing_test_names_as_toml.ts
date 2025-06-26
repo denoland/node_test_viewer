@@ -41,56 +41,12 @@ for (const report of reports) {
 const consistentlyPassing = Object.entries(map).filter(([_, results]) =>
   results.every((r) => r === true)
 ).map(([testName, _]) => testName);
-const consistentlyFailing = Object.entries(map).filter(([_, results]) =>
-  results.every((r) => r === false)
-).map(([testName, _]) => testName);
-const ignoredTests = Object.entries(map).filter(([_, results]) =>
-  results.some((r) => r === "IGNORE")
-).map(([testName, _]) => testName);
-const flakyTests = Object.entries(map).filter(([_, results]) =>
-  results.some((r) => r === false) && results.some((r) => r === true)
-).map(([testName, _]) => testName);
-
-const totalTests = Object.keys(map).length - Object.keys(ignoredTests).length;
-
-function percentage(part: number, total: number): string {
-  return ((part / total) * 100).toFixed(2) + "%";
-}
 
 console.log(
-  `## Consistently Passing Tests(${consistentlyPassing.length} - ${
-    percentage(consistentlyPassing.length, totalTests)
-  }):`,
+  `[tests]`,
 );
-for (const test of consistentlyPassing) {
-  console.log(`- ${test}`);
-}
-
-console.log(
-  `\n## Consistently Failing Tests(${consistentlyFailing.length} - ${
-    percentage(consistentlyFailing.length, totalTests)
-  }):`,
-);
-for (const test of consistentlyFailing) {
-  console.log(`- ${test}`);
-}
-
-console.log(
-  `\n## Ignored Tests(${ignoredTests.length} - ${
-    percentage(ignoredTests.length, totalTests)
-  }):`,
-);
-for (const test of ignoredTests) {
-  console.log(`- ${test}`);
-}
-
-console.log(
-  `\n## Flaky Tests(${flakyTests.length} - ${
-    percentage(flakyTests.length, totalTests)
-  }):`,
-);
-for (const test of flakyTests) {
-  console.log(`- ${test}`);
+for (const test of consistentlyPassing.sort()) {
+  console.log(`"${test}" = {}`);
 }
 
 function getReport(
