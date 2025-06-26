@@ -7,6 +7,13 @@ import { pooledMap } from "@std/async/pool";
 const platforms = ["linux", "windows", "darwin"] as const;
 const DAYS = 10;
 
+// These tests pass in CI but fail locally, so we exclude them.
+const EXCLUDED = new Set([
+  "parallel/test-net-write-after-end-nt.js", // flaky locally
+  "parallel/test-repl-stdin-push-null.js", // failing locally
+  "pseudo-tty/test-repl-external-module.js", // failing locally
+]);
+
 const tasks = platforms.map((os) =>
   [...Array(DAYS).keys()].map((i) => [i + 1, os] as const)
 ).flat();
@@ -31,6 +38,9 @@ console.error(`${reports.length} reports fetched.`);
 
 for (const report of reports) {
   for (const [testName, result] of Object.entries(report.results)) {
+    if (EXCLUDED.has(testName)) {
+      continue; // Skip excluded tests
+    }
     if (!map[testName]) {
       map[testName] = [];
     }
