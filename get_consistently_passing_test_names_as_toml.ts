@@ -9,8 +9,14 @@ const DAYS = 10;
 
 // These tests pass in CI but fail locally, so we exclude them.
 const EXCLUDED = new Set([
-  "parallel/test-net-write-after-end-nt.js", // flaky locally
-  "parallel/test-repl-stdin-push-null.js", // failing locally
+  "parallel/test-child-process-send-utf8.js", // flaky with debug build
+  "parallel/test-dgram-connect-send-empty-packet.js", // flaky with debug build
+  "parallel/test-http-agent-maxtotalsockets.js", // flaky with debug build
+  "parallel/test-http-pipeline-requests-connection-leak.js", // timeout with debug build
+  "parallel/test-net-large-string.js", // timeout with debug build
+  "parallel/test-net-write-after-end-nt.js", // flaky with debug build
+  "parallel/test-repl-stdin-push-null.js", // failing locally with debug build
+  "parallel/test-vm-global-property-prototype.js", // flaky with debug build
   "pseudo-tty/test-repl-external-module.js", // failing locally
 ]);
 
@@ -40,6 +46,9 @@ for (const report of reports) {
   for (const [testName, result] of Object.entries(report.results)) {
     if (EXCLUDED.has(testName)) {
       continue; // Skip excluded tests
+    }
+    if (testName.startsWith("internet/")) {
+      continue; // Skip internet dependent tests
     }
     if (!map[testName]) {
       map[testName] = [];
