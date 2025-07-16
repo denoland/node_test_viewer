@@ -49,7 +49,7 @@ export default define.page<typeof handler>((props) => {
     <>
       <div class="w-full">
         <p class="pt-3 px-2 sm:px-10">
-          <a href="/" class="text-blue-500">&laquo; Back</a>
+          <a href="/" class="text-blue-500 dark:text-blue-400">&laquo; Back</a>
         </p>
         <h2 class="pt-6 pb-3 px-2 w-full sm:w-4/5 mx-auto text-xl border-b border-dashed">
           <span class="font-bold">Results</span> {report.date}
@@ -60,7 +60,7 @@ export default define.page<typeof handler>((props) => {
               {i > 0 && <span class="py-1 text-gray-400">|</span>}
               <a
                 key={category}
-                class="text-blue-500 hover:underline px-2 py-1"
+                class="text-blue-500 dark:text-blue-400 hover:underline px-2 py-1"
                 href={`#${category}`}
               >
                 {category}

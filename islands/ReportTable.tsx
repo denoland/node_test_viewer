@@ -33,7 +33,7 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
             </span>
             <br />
             <Ignored report={report.linux} />
-            <p class="font-normal font-mono text-sm text-gray-700">
+            <p class="font-normal font-mono text-sm text-gray-700 dark:text-gray-400">
               rev <DenoVersion version={report.linux?.denoVersion} />
             </p>
           </th>
@@ -47,7 +47,7 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
             </span>
             <br />
             <Ignored report={report.linux} />
-            <p class="font-normal font-mono text-sm text-gray-700">
+            <p class="font-normal font-mono text-sm text-gray-700 dark:text-gray-400">
               rev <DenoVersion version={report.windows?.denoVersion} />
             </p>
           </th>
@@ -61,7 +61,7 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
             </span>
             <br />
             <Ignored report={report.linux} />
-            <p class="font-normal font-mono text-sm text-gray-700">
+            <p class="font-normal font-mono text-sm text-gray-700 dark:text-gray-400">
               rev <DenoVersion version={report.darwin?.denoVersion} />
             </p>
           </th>
@@ -74,7 +74,7 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
         const darwin = report.darwin;
         return (
           <tbody key={category} id={category}>
-            <tr class="text-center bg-gray-50 border-t border-gray-300">
+            <tr class="text-center bg-gray-50 border-t border-gray-300 dark:bg-gray-800 dark:border-gray-700">
               <td
                 colSpan={TEST_NAME_COLSPAN}
                 class="text-sm font-bold text-left py-1 px-3"
@@ -121,7 +121,7 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
               return (
                 <tr
                   key={testName}
-                  class="border-t border-gray-300 font-mono"
+                  class="border-t border-gray-300 font-mono dark:text-gray-400 dark:border-gray-700"
                 >
                   <td
                     colSpan={TEST_NAME_COLSPAN}
@@ -130,7 +130,7 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
                     <span class="relative group">
                       <a
                         href={`https://github.com/nodejs/node/blob/v${nodeVersion}/test/${testName}`}
-                        class="hover:text-blue-500"
+                        class="hover:text-blue-500 hover:dark:text-blue-400"
                         target="_blank"
                       >
                         {testName}
@@ -162,13 +162,13 @@ function Ignored(props: { report: TestReport | undefined }) {
   const { report } = props;
   if (!report) {
     return (
-      <span class="text-gray-500 text-sm font-normal">
+      <span class="text-gray-500 text-sm font-normal dark:text-gray-400">
         N/A
       </span>
     );
   }
   return (
-    <span class="text-gray-500 text-sm font-normal">
+    <span class="text-gray-500 text-sm font-normal dark:text-gray-400">
       {report?.ignore ?? 0} ignored
     </span>
   );
@@ -189,19 +189,19 @@ function Result(
 ) {
   const { result } = props;
   if (!result) {
-    return <span class="text-gray-400">N/A</span>;
+    return <span class="text-gray-400 dark:text-gray-500">N/A</span>;
   }
   if (result[0] === true) {
-    return <span class="text-green-500">PASS</span>;
+    return <span class="text-green-500 dark:text-green-400">PASS</span>;
   }
   if (result[0] === "IGNORE") {
-    return <span class="text-gray-500">IGNORE</span>;
+    return <span class="text-gray-500 dark:text-gray-400">IGNORE</span>;
   }
   const error = result[1];
   if (error) {
     if ("code" in error) {
       return (
-        <span class="text-red-500 relative group">
+        <span class="text-red-500 dark:text-red-400 relative group">
           FAIL<ErrorTooltip
             text={error.stderr.trim() || (
               <span class="italic">
@@ -214,20 +214,20 @@ function Result(
       );
     } else if ("timeout" in error) {
       return (
-        <span class="text-red-500 relative group">
+        <span class="text-red-500 dark:text-red-400 relative group">
           T/O<ErrorTooltip text={`Timed out after ${error.timeout}ms`} />
         </span>
       );
     } else if ("message" in error) {
       return (
-        <span class="text-red-500 relative group">
+        <span class="text-red-500 dark:text-red-400 relative group">
           FAIL<ErrorTooltip text={error.message} />
         </span>
       );
     }
   }
 
-  return <span class="text-gray-400">INVL</span>;
+  return <span class="text-gray-400 dark:text-gray-500">INVL</span>;
 }
 
 function ErrorTooltip(props: { text: ComponentChildren; class?: string }) {
@@ -267,7 +267,7 @@ function CommandTooltip(props: { path: string; useNodeTest?: boolean }) {
     }
   }, []);
   return (
-    <div class="absolute w-[50vw] top-[14px] -left-[25px] overflow-scroll pt-3 pb-5 text-xs font-mono text-left hidden group-hover:block bg-gray-100 border border-gray-500 rounded shadow-lg z-10">
+    <div class="absolute w-[50vw] top-[14px] -left-[25px] overflow-scroll pt-3 pb-5 text-xs font-mono text-left hidden group-hover:block bg-gray-100 border border-gray-500 rounded shadow-lg z-10 dark:bg-gray-800 dark:border-gray-700">
       <p class="px-4 text-right">
         <label class="mx-4 inline-flex items-center">
           <input
@@ -287,37 +287,37 @@ function CommandTooltip(props: { path: string; useNodeTest?: boolean }) {
         You can run this test with the command below (<button
           type="button"
           onClick={copy1}
-          class="text-blue-500"
+          class="text-blue-500 dark:text-blue-400"
         >
           {copied1 ? "Copied!" : "Click to copy"}
         </button>):
       </p>
-      <pre class="mt-1 font-mono bg-gray-700 px-4 py-2 overflow-scroll">
-        <code class="text-gray-200">{command1}</code>
+      <pre class="mt-1 font-mono bg-gray-700 px-4 py-2 overflow-scroll dark:bg-gray-900">
+        <code class="text-gray-200 dark:text-gray-400">{command1}</code>
       </pre>
       <p class="mt-6 px-4">
         Or, without using wrapper script (<button
           type="button"
           onClick={copy0}
-          class="text-blue-500"
+          class="text-blue-500 dark:text-blue-400"
         >
           {copied0 ? "Copied!" : "Click to copy"}
         </button>):
       </p>
-      <pre class="mt-1 font-mono bg-gray-700 px-4 py-2 overflow-scroll">
-        <code class="text-gray-200">{command0}</code>
+      <pre class="mt-1 font-mono bg-gray-700 px-4 py-2 overflow-scroll dark:bg-gray-900">
+        <code class="text-gray-200 dark:text-gray-400">{command0}</code>
       </pre>
       <p class="mt-6 px-4">
         Copy the test name to clipboard (<button
           type="button"
           onClick={copyPath}
-          class="text-blue-500"
+          class="text-blue-500 dark:text-blue-400"
         >
           {pathCopied ? "Copied!" : "Click to copy"}
         </button>)
       </p>
-      <pre class="mt-1 font-mono bg-gray-700 px-4 py-2 overflow-scroll">
-        <code class="text-gray-200">{props.path}</code>
+      <pre class="mt-1 font-mono bg-gray-700 px-4 py-2 overflow-scroll dark:bg-gray-900">
+        <code class="text-gray-200 dark:text-gray-400">{props.path}</code>
       </pre>
     </div>
   );
@@ -328,7 +328,7 @@ function Summary(
 ) {
   if (!props.data) {
     return (
-      <span class="font-normal font-mono text-sm text-gray-700">
+      <span class="font-normal font-mono text-sm text-gray-700 dark:text-gray-400">
         N/A
       </span>
     );
@@ -339,7 +339,7 @@ function Summary(
       <span class="underline decoration-dotted">
         {(pass / total * 100).toFixed(2)}%
       </span>
-      <span class="text-gray-600 text-xs sm:text-[smaller] ml-1">
+      <span class="text-gray-600 text-xs sm:text-[smaller] ml-1 dark:text-gray-400">
         ({pass}/{total})
       </span>
     </span>
@@ -373,7 +373,7 @@ function CopyFailedTestCasesButton(props: { tests: string[] }) {
   );
   return (
     <button
-      class="ml-2 text-xs font-normal text-gray-500 hover:underline"
+      class="ml-2 text-xs font-normal text-gray-500 hover:underline dark:text-gray-400"
       onClick={copy}
       type="button"
     >

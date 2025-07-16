@@ -15,7 +15,7 @@ export function DenoVersion(
         href={"https://github.com/denoland/deno/commit/" + version}
         title={version}
         target="_blank"
-        class={`hover:text-blue-500 transition-colors duration-200 ${
+        class={`hover:text-blue-500 transition-colors duration-200 dark:hover:text-blue-400 ${
           props.class ?? ""
         }`}
       >
