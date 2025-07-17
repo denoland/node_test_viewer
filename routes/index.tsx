@@ -55,16 +55,25 @@ function LatestResults(props: { summary: DaySummary | undefined }) {
     ["darwin", props.summary?.darwin],
   ] as const;
   return (
-    <div class="w-full pt-10 pb-5 border-b border-dashed">
-      <div class="px-2 sm:px-10 text-sm text-gray-500">
+    <div class="w-full pt-10 pb-5 border-b border-dashed border-gray-300 dark:border-gray-600">
+      <div class="px-2 sm:px-10 text-sm text-gray-500 dark:text-gray-400">
         This page tracks the ratio of passed Node test cases with{" "}
-        <a href="https://github.com/denoland/deno" target="_blank">Deno</a>{" "}
+        <a
+          href="https://github.com/denoland/deno"
+          target="_blank"
+          class="text-blue-500 dark:text-blue-400"
+        >
+          Deno
+        </a>{" "}
         runtime
       </div>
       <h2 class="px-2 sm:px-10">
         <span class="font-bold text-xl">Latest results</span> ({date
           ? (
-            <a class="text-blue-500" href={"/results/" + date}>
+            <a
+              class="text-blue-500 dark:text-blue-400"
+              href={"/results/" + date}
+            >
               {date}
             </a>
           )
@@ -85,16 +94,16 @@ function LatestResults(props: { summary: DaySummary | undefined }) {
                     <span class="underline decoration-dotted">
                       {(item.pass / item.total * 100).toFixed(2)}%
                     </span>
-                    <span class="text-gray-600 hidden sm:inline text-[smaller] ml-1">
+                    <span class="text-gray-600 dark:text-gray-400 hidden sm:inline text-[smaller] ml-1">
                       ({item.pass}/{item.total})
                     </span>
                   </div>
-                  <div class="text-sm font-mono text-gray-500">
+                  <div class="text-sm font-mono text-gray-500 dark:text-gray-400">
                     <DenoVersion version={item?.denoVersion} />
                   </div>
                 </>
               )
-              : <div class="text-gray-400">N/A</div>}
+              : <div class="text-gray-400 dark:text-gray-500">N/A</div>}
           </div>
         ))}
       </div>

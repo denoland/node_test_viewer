@@ -3,6 +3,7 @@
 
 import { useEffect, useRef } from "preact/hooks";
 import { DaySummary } from "util/types.ts";
+import { isDarktheme } from "util/colorScheme.ts";
 
 const DAY = 24 * 60 * 60 * 1000;
 
@@ -35,6 +36,7 @@ export function Chart(
       const { default: ApexCharts } = await import(
         "https://cdn.skypack.dev/pin/apexcharts@v3.26.1-JfauDUVk6IgccJUyzphD/mode=imports,min/optimized/apexcharts.js"
       );
+      const isDark = isDarktheme();
 
       const linuxData = extractData("linux", props.summaryReports);
       const windowsData = extractData("windows", props.summaryReports);
@@ -45,15 +47,20 @@ export function Chart(
           type: "line",
           height: "100%",
           width: "100%",
+          foreColor: isDark ? "#fff" : "#000",
         },
         legend: {
           horizontalAlign: "left",
           position: "top",
           showForSingleSeries: true,
+          labels: {
+            colors: isDark ? ["#fff"] : ["#000"],
+          },
         },
         stroke: {
           curve: "straight",
           width: 1.7,
+          colors: isDark ? ["#fff"] : ["#000"],
         },
         series: [
           {
@@ -74,6 +81,9 @@ export function Chart(
           min: 0,
           max: 4000,
           tickAmount: 4,
+        },
+        tooltip: {
+          theme: isDark ? "dark" : "light",
         },
       });
       chart.render();

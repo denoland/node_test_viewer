@@ -4,6 +4,7 @@
 import { useEffect, useRef } from "preact/hooks";
 import type { DayReport, TestReport } from "util/types.ts";
 import { categories, splitTestNamesByCategory } from "util/category.ts";
+import { isDarktheme } from "util/colorScheme.ts";
 
 export function ResultByCategoryChart(
   props: { class?: string; report: DayReport },
@@ -15,6 +16,8 @@ export function ResultByCategoryChart(
       const { default: ApexCharts } = await import(
         "https://esm.sh/apexcharts@4.5.0"
       );
+      const isDark = isDarktheme();
+
       const { windows, linux, darwin } = props.report;
       const testCategories = splitTestNamesByCategory(
         getTestNames(props.report),
@@ -50,6 +53,7 @@ export function ResultByCategoryChart(
           height: "100%",
           width: "100%",
           stacked: true,
+          foreColor: isDark ? "#fff" : "#000",
         },
         plotOptions: {
           bar: {
@@ -59,10 +63,13 @@ export function ResultByCategoryChart(
         legend: {
           horizontalAlign: "left",
           position: "top",
+          labels: {
+            colors: isDark ? ["#fff"] : ["#000"],
+          },
         },
         stroke: {
           width: 1,
-          colors: ["#fff"],
+          colors: isDark ? ["#fff"] : ["#000"],
         },
         dataLabels: {
           enabled: false,
@@ -111,17 +118,22 @@ export function ResultByCategoryChart(
           categories,
           labels: {
             formatter: (val: number) => val + "%",
+            colors: isDark ? "#fff" : "#000",
           },
           tickAmount: 5,
         },
         yaxis: {
           max: 100,
           min: 0,
+          labels: {
+            colors: isDark ? "#fff" : "#000",
+          },
         },
         tooltip: {
           y: {
             formatter: (val: number) => val.toFixed(2) + "%",
           },
+          theme: isDark ? "dark" : "light",
         },
       });
       chart.render();

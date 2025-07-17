@@ -12,7 +12,7 @@ export default function App({ Component }: PageProps) {
         <link rel="stylesheet" href="/styles.css" />
         <link rel="icon" href="/node.svg" />
       </head>
-      <body>
+      <body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
         <div class="w-full">
           <Header />
           <Component />
@@ -25,7 +25,7 @@ export default function App({ Component }: PageProps) {
 
 function Header() {
   return (
-    <div class="w-full flex justify-between items-center px-2 sm:px-7 py-3 border-b border-dashed">
+    <div class="w-full flex justify-between items-center px-2 sm:px-7 py-3 border-b border-dashed border-gray-300 dark:border-gray-600">
       <h1 class="text-md font-semibold">
         <a href="/">
           <img class="h-8 inline mr-1" src="/node-deno.svg" /> Node test viewer
@@ -37,9 +37,9 @@ function Header() {
 
 function Footer() {
   return (
-    <div class="py-5 text-sm text-center">
+    <div class="py-5 text-sm text-center text-gray-600 dark:text-gray-400">
       <a
-        class="text-blue-500"
+        class="text-blue-500 dark:text-blue-400"
         href="https://github.com/denoland/node_test_viewer"
         target="_blank"
       >
@@ -47,7 +47,7 @@ function Footer() {
       </a>
       ・
       <a
-        class="text-blue-500"
+        class="text-blue-500 dark:text-blue-400"
         href="https://github.com/denoland/deno"
         target="_blank"
       >

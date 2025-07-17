@@ -45,10 +45,12 @@ function TableRow(props: { date: string; summary: DaySummary }) {
 
   return (
     <tr
-      class="border-t border-grey-500 hover:bg-gray-50 cursor-pointer"
+      class="border-t border-gray-500 hover:bg-gray-50 cursor-pointer dark:hover:bg-gray-800 transition-colors duration-200"
       onClick={open}
     >
-      <td class="text-center py-1 text-blue-500">{props.date}</td>
+      <td class="text-center py-1 text-blue-500 dark:text-blue-400">
+        {props.date}
+      </td>
       {platforms.map((os) => props.summary[os]).map((report, i) => (
         <td key={i} class="py-1 text-center font-mono">
           {report
