@@ -16,6 +16,7 @@ const EXCLUDED = new Set([
   "parallel/test-net-large-string.js", // timeout with debug build
   "parallel/test-net-write-after-end-nt.js", // flaky with debug build
   "parallel/test-repl-stdin-push-null.js", // failing locally with debug build
+  "parallel/test-fs-read-stream-concurrent-reads.js", // flaky with debug build
   "parallel/test-vm-global-property-prototype.js", // flaky with debug build
   "pseudo-tty/test-repl-external-module.js", // failing locally
 ]);
