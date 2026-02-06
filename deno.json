@@ -65,7 +65,6 @@
   ],
   "deploy": {
     "org": "denoland",
-    "app": "node-test-viewer",
-    "entrypoint": "main.ts"
+    "app": "node-test-viewer"
   }
 }
