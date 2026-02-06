@@ -3,12 +3,19 @@
 import { tailwind } from "@fresh/plugin-tailwind";
 
 import { Builder } from "fresh/dev";
-import { app } from "./main.ts";
 
 const builder = new Builder();
-tailwind(builder, app, {});
+
+const importApp = async () => {
+  const { app } = await import("./main.ts");
+  tailwind(builder, {});
+  return app;
+};
+
 if (Deno.args.includes("build")) {
-  await builder.build(app);
+  const applySnapshot = await builder.build();
+  const app = await importApp();
+  applySnapshot(app);
 } else {
-  await builder.listen(app);
+  await builder.listen(importApp);
 }

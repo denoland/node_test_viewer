@@ -1,6 +1,6 @@
 // Copyright 2025 the Deno authors. MIT license.
 
-import { App, fsRoutes, staticFiles } from "fresh";
+import { App, staticFiles } from "fresh";
 import { define, type State } from "util/fresh.ts";
 
 export const app = new App<State>();
@@ -12,11 +12,7 @@ const loggerMiddleware = define.middleware((ctx) => {
 });
 app.use(loggerMiddleware);
 
-await fsRoutes(app, {
-  dir: "./",
-  loadIsland: (path) => import(`./islands/${path}`),
-  loadRoute: (path) => import(`./routes/${path}`),
-});
+app.fsRoutes("/");
 
 if (import.meta.main) {
   await app.listen();

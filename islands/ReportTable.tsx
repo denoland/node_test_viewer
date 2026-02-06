@@ -9,6 +9,43 @@ import { useEffect, useState } from "preact/hooks";
 
 const TEST_NAME_COLSPAN = 2;
 
+function ExpandIcon({ expanded }: { expanded: boolean }) {
+  return (
+    <svg
+      class={`inline-block w-4 h-4 mr-1 transition-transform duration-200 ${
+        expanded ? "rotate-90" : ""
+      }`}
+      viewBox="0 0 20 20"
+      fill="currentColor"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+        clip-rule="evenodd"
+      />
+    </svg>
+  );
+}
+
+function FailCount({
+  report,
+  testNames,
+}: {
+  report: TestReport | undefined;
+  testNames: string[];
+}) {
+  if (!report) return null;
+  const rate = getRateForSubset(report, testNames);
+  if (!rate) return null;
+  const fail = rate.total - rate.pass;
+  if (fail === 0) return null;
+  return (
+    <span class="text-red-500 dark:text-red-400 text-xs font-mono ml-1">
+      {fail} failing
+    </span>
+  );
+}
+
 export function ReportTable(props: { class?: string; report: DayReport }) {
   const { report } = props;
 
@@ -16,145 +53,200 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
   const nodeVersion = getNodeVersion(report);
   const date = report.date;
 
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+
+  const toggleCategory = (category: string) => {
+    setExpanded((prev) => ({ ...prev, [category]: !prev[category] }));
+  };
+
+  const expandAll = () => {
+    const all: Record<string, boolean> = {};
+    for (const [category] of testCategories) {
+      all[category] = true;
+    }
+    setExpanded(all);
+  };
+
+  const collapseAll = () => {
+    setExpanded({});
+  };
+
   return (
-    <table
-      class={`border-collapse table-fixed ${props.class ?? ""}`}
-    >
-      <thead>
-        <tr>
-          <th class="align-bottom" colSpan={TEST_NAME_COLSPAN}></th>
-          <th class="align-top">
-            Linux
-            <br class="inline sm:hidden" />
-            <LinkToJsonAndErrors date={date} os="linux" />
-            <br />
-            <span class="font-bold">
-              <Summary data={report.linux} />
-            </span>
-            <br />
-            <Ignored report={report.linux} />
-            <p class="font-normal font-mono text-sm text-gray-700 dark:text-gray-400">
-              rev <DenoVersion version={report.linux?.denoVersion} />
-            </p>
-          </th>
-          <th>
-            Windows
-            <br class="inline sm:hidden" />
-            <LinkToJsonAndErrors date={date} os="windows" />
-            <br />
-            <span class="font-bold">
-              <Summary data={report.windows} />
-            </span>
-            <br />
-            <Ignored report={report.linux} />
-            <p class="font-normal font-mono text-sm text-gray-700 dark:text-gray-400">
-              rev <DenoVersion version={report.windows?.denoVersion} />
-            </p>
-          </th>
-          <th>
-            Darwin
-            <br class="inline sm:hidden" />
-            <LinkToJsonAndErrors date={date} os="darwin" />
-            <br />
-            <span class="font-bold">
-              <Summary data={report.darwin} />
-            </span>
-            <br />
-            <Ignored report={report.linux} />
-            <p class="font-normal font-mono text-sm text-gray-700 dark:text-gray-400">
-              rev <DenoVersion version={report.darwin?.denoVersion} />
-            </p>
-          </th>
-        </tr>
-      </thead>
-      {testCategories.map(([category, testNames]) => {
-        testNames.sort();
-        const linux = report.linux;
-        const windows = report.windows;
-        const darwin = report.darwin;
-        return (
-          <tbody key={category} id={category}>
-            <tr class="text-center bg-gray-50 border-t border-gray-300 dark:bg-gray-800 dark:border-gray-700">
-              <td
-                colSpan={TEST_NAME_COLSPAN}
-                class="text-sm font-bold text-left py-1 px-3"
+    <div class={props.class ?? ""}>
+      <div class="flex justify-end gap-2 mb-2 px-3">
+        <button
+          type="button"
+          onClick={expandAll}
+          class="text-xs text-blue-500 dark:text-blue-400 hover:underline"
+        >
+          Expand all
+        </button>
+        <span class="text-gray-400">|</span>
+        <button
+          type="button"
+          onClick={collapseAll}
+          class="text-xs text-blue-500 dark:text-blue-400 hover:underline"
+        >
+          Collapse all
+        </button>
+      </div>
+      <table class="border-collapse table-fixed w-full">
+        <thead>
+          <tr>
+            <th class="align-bottom" colSpan={TEST_NAME_COLSPAN}></th>
+            <th class="align-top">
+              Linux
+              <br class="inline sm:hidden" />
+              <LinkToJsonAndErrors date={date} os="linux" />
+              <br />
+              <span class="font-bold">
+                <Summary data={report.linux} />
+              </span>
+              <br />
+              <Ignored report={report.linux} />
+              <p class="font-normal font-mono text-sm text-gray-700 dark:text-gray-400">
+                rev <DenoVersion version={report.linux?.denoVersion} />
+              </p>
+            </th>
+            <th>
+              Windows
+              <br class="inline sm:hidden" />
+              <LinkToJsonAndErrors date={date} os="windows" />
+              <br />
+              <span class="font-bold">
+                <Summary data={report.windows} />
+              </span>
+              <br />
+              <Ignored report={report.linux} />
+              <p class="font-normal font-mono text-sm text-gray-700 dark:text-gray-400">
+                rev <DenoVersion version={report.windows?.denoVersion} />
+              </p>
+            </th>
+            <th>
+              Darwin
+              <br class="inline sm:hidden" />
+              <LinkToJsonAndErrors date={date} os="darwin" />
+              <br />
+              <span class="font-bold">
+                <Summary data={report.darwin} />
+              </span>
+              <br />
+              <Ignored report={report.linux} />
+              <p class="font-normal font-mono text-sm text-gray-700 dark:text-gray-400">
+                rev <DenoVersion version={report.darwin?.denoVersion} />
+              </p>
+            </th>
+          </tr>
+        </thead>
+        {testCategories.map(([category, testNames]) => {
+          testNames.sort();
+          const linux = report.linux;
+          const windows = report.windows;
+          const darwin = report.darwin;
+          const isExpanded = !!expanded[category];
+          return (
+            <tbody key={category} id={category}>
+              <tr
+                class="text-center bg-gray-50 border-t border-gray-300 dark:bg-gray-800 dark:border-gray-700 cursor-pointer select-none hover:bg-gray-100 dark:hover:bg-gray-750 transition-colors duration-100"
+                onClick={() => toggleCategory(category)}
               >
-                {category}
-                <CopyFailedTestCasesButton
-                  tests={testNames.filter((testName) => {
-                    const linuxResult = linux?.results[testName];
-                    const windowsResult = windows?.results[testName];
-                    const darwinResult = darwin?.results[testName];
-                    return (
-                      (linuxResult && linuxResult[0] === false) ||
-                      (windowsResult && windowsResult[0] === false) ||
-                      (darwinResult && darwinResult[0] === false)
-                    );
-                  })}
-                />
-              </td>
-              <td>
-                <span class="text-sm">
-                  <Summary data={getRateForSubset(linux, testNames)} />
-                </span>
-              </td>
-              <td>
-                <span class="text-sm">
-                  <Summary data={getRateForSubset(windows, testNames)} />
-                </span>
-              </td>
-              <td>
-                <span class="text-sm">
-                  <Summary data={getRateForSubset(darwin, testNames)} />
-                </span>
-              </td>
-            </tr>
-            {testNames.map((testName) => {
-              const linux = report.linux?.results[testName];
-              const windows = report.windows?.results[testName];
-              const darwin = report.darwin?.results[testName];
-
-              const resultOption = linux?.[2] ??
-                windows?.[2] ??
-                darwin?.[2];
-
-              return (
-                <tr
-                  key={testName}
-                  class="border-t border-gray-300 font-mono dark:text-gray-400 dark:border-gray-700"
+                <td
+                  colSpan={TEST_NAME_COLSPAN}
+                  class="text-sm font-bold text-left py-2 px-3"
                 >
-                  <td
-                    colSpan={TEST_NAME_COLSPAN}
-                    class="text-xs py-1 whitespace-nowrap sm:overflow-visible overflow-scroll px-1"
-                  >
-                    <span class="relative group">
-                      <a
-                        href={`https://github.com/nodejs/node/blob/v${nodeVersion}/test/${testName}`}
-                        class="hover:text-blue-500 hover:dark:text-blue-400"
-                        target="_blank"
+                  <ExpandIcon expanded={isExpanded} />
+                  {category}
+                  <span class="text-xs font-normal text-gray-500 dark:text-gray-400 ml-2">
+                    ({testNames.length} tests)
+                  </span>
+                  {isExpanded && (
+                    <CopyFailedTestCasesButton
+                      tests={testNames.filter((testName) => {
+                        const linuxResult = linux?.results[testName];
+                        const windowsResult = windows?.results[testName];
+                        const darwinResult = darwin?.results[testName];
+                        return (
+                          (linuxResult && linuxResult[0] === false) ||
+                          (windowsResult && windowsResult[0] === false) ||
+                          (darwinResult && darwinResult[0] === false)
+                        );
+                      })}
+                    />
+                  )}
+                </td>
+                <td>
+                  <span class="text-sm">
+                    <Summary data={getRateForSubset(linux, testNames)} />
+                  </span>
+                  {!isExpanded && (
+                    <FailCount report={linux} testNames={testNames} />
+                  )}
+                </td>
+                <td>
+                  <span class="text-sm">
+                    <Summary data={getRateForSubset(windows, testNames)} />
+                  </span>
+                  {!isExpanded && (
+                    <FailCount report={windows} testNames={testNames} />
+                  )}
+                </td>
+                <td>
+                  <span class="text-sm">
+                    <Summary data={getRateForSubset(darwin, testNames)} />
+                  </span>
+                  {!isExpanded && (
+                    <FailCount report={darwin} testNames={testNames} />
+                  )}
+                </td>
+              </tr>
+              {isExpanded &&
+                testNames.map((testName) => {
+                  const linux = report.linux?.results[testName];
+                  const windows = report.windows?.results[testName];
+                  const darwin = report.darwin?.results[testName];
+
+                  const resultOption = linux?.[2] ??
+                    windows?.[2] ??
+                    darwin?.[2];
+
+                  return (
+                    <tr
+                      key={testName}
+                      class="border-t border-gray-300 font-mono dark:text-gray-400 dark:border-gray-700"
+                    >
+                      <td
+                        colSpan={TEST_NAME_COLSPAN}
+                        class="text-xs py-1 whitespace-nowrap sm:overflow-visible overflow-scroll px-1"
                       >
-                        {testName}
-                      </a>
-                      <div class="sm:block hidden">
-                        <CommandTooltip
-                          path={testName}
-                          useNodeTest={resultOption?.usesNodeTest}
-                        />
-                      </div>
-                    </span>
-                  </td>
-                  {[linux, windows, darwin].map((result) => (
-                    <td class="text-center">
-                      <Result result={result} />
-                    </td>
-                  ))}
-                </tr>
-              );
-            })}
-          </tbody>
-        );
-      })}
-    </table>
+                        <span class="relative group">
+                          <a
+                            href={`https://github.com/nodejs/node/blob/v${nodeVersion}/test/${testName}`}
+                            class="hover:text-blue-500 hover:dark:text-blue-400"
+                            target="_blank"
+                          >
+                            {testName}
+                          </a>
+                          <div class="sm:block hidden">
+                            <CommandTooltip
+                              path={testName}
+                              useNodeTest={resultOption?.usesNodeTest}
+                            />
+                          </div>
+                        </span>
+                      </td>
+                      {[linux, windows, darwin].map((result) => (
+                        <td class="text-center">
+                          <Result result={result} />
+                        </td>
+                      ))}
+                    </tr>
+                  );
+                })}
+            </tbody>
+          );
+        })}
+      </table>
+    </div>
   );
 }
 
