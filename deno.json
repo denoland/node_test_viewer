@@ -1,6 +1,6 @@
 {
   "tasks": {
-    "check": "deno fmt --check && deno lint && deno check **/*.ts && deno check **/*.tsx",
+    "check": "deno fmt --check && deno lint && deno check **/*.ts && deno check --allow-import **/*.tsx",
     "dev": "vite",
     "build": "vite build",
     "start": "deno serve -A _fresh/server.js",
