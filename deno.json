@@ -62,9 +62,5 @@
   },
   "unstable": [
     "kv"
-  ],
-  "deploy": {
-    "org": "denoland",
-    "app": "node-test-viewer"
-  }
+  ]
 }
