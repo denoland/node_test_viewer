@@ -62,5 +62,8 @@
   },
   "unstable": [
     "kv"
-  ]
+  ],
+  "deploy": {
+    "entrypoint": "main.ts"
+  }
 }
