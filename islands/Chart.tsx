@@ -5,25 +5,20 @@ import { useEffect, useRef } from "preact/hooks";
 import { DaySummary } from "util/types.ts";
 import { isDarktheme } from "util/colorScheme.ts";
 
-const DAY = 24 * 60 * 60 * 1000;
-
-export const xaxis = {
-  type: "datetime",
-  max: Math.floor(Date.now() / DAY) * DAY,
-};
-
 const extractData = (
   os: "linux" | "windows" | "darwin",
   summaryReports: Record<string, DaySummary>,
 ) => {
   const dates = Object.keys(summaryReports).sort();
-  const data = dates
+  return dates
     .filter((date) => summaryReports[date][os])
     .map((date) => {
       const report = summaryReports[date][os]!;
-      return [new Date(report.date), report.pass];
+      return [
+        new Date(report.date).getTime(),
+        report.pass / report.total * 100,
+      ];
     });
-  return data;
 };
 
 export function Chart(
@@ -34,55 +29,83 @@ export function Chart(
     let chart: ApexCharts | undefined;
     (async () => {
       const { default: ApexCharts } = await import(
-        "https://cdn.skypack.dev/pin/apexcharts@v3.26.1-JfauDUVk6IgccJUyzphD/mode=imports,min/optimized/apexcharts.js"
+        "https://esm.sh/apexcharts@4.5.0"
       );
       const isDark = isDarktheme();
+      const textColor = isDark ? "#9ca3af" : "#6b7280";
+      const gridColor = isDark ? "#374151" : "#e5e7eb";
 
       const linuxData = extractData("linux", props.summaryReports);
       const windowsData = extractData("windows", props.summaryReports);
       const darwinData = extractData("darwin", props.summaryReports);
 
-      const chart = new ApexCharts(chartRef.current!, {
+      // Auto-calculate y-axis range from data
+      const allValues = [...linuxData, ...windowsData, ...darwinData].map(
+        (d) => d[1],
+      );
+      const minVal = Math.min(...allValues);
+      const yMin = Math.max(0, Math.floor(minVal - 2));
+
+      chart = new ApexCharts(chartRef.current!, {
         chart: {
           type: "line",
           height: "100%",
           width: "100%",
-          foreColor: isDark ? "#fff" : "#000",
+          foreColor: textColor,
+          toolbar: { show: false },
+          fontFamily: "ui-monospace, monospace",
+          zoom: { enabled: true },
+        },
+        grid: {
+          borderColor: gridColor,
+          strokeDashArray: 3,
         },
         legend: {
           horizontalAlign: "left",
           position: "top",
-          showForSingleSeries: true,
-          labels: {
-            colors: isDark ? ["#fff"] : ["#000"],
-          },
+          fontSize: "12px",
+          labels: { colors: textColor },
+          markers: { size: 6, shape: "circle" },
         },
         stroke: {
-          curve: "straight",
-          width: 1.7,
-          colors: isDark ? ["#fff"] : ["#000"],
+          curve: "smooth",
+          width: 2.5,
+        },
+        colors: [
+          isDark ? "#7c9ec6" : "#5b7fa3",
+          isDark ? "#c4956e" : "#a07850",
+          isDark ? "#7db590" : "#5f9970",
+        ],
+        markers: {
+          size: 3,
+          strokeWidth: 0,
+          hover: { size: 5 },
         },
         series: [
-          {
-            name: "linux",
-            data: linuxData,
-          },
-          {
-            name: "windows",
-            data: windowsData,
-          },
-          {
-            name: "darwin",
-            data: darwinData,
-          },
+          { name: "Linux", data: linuxData },
+          { name: "Windows", data: windowsData },
+          { name: "Darwin", data: darwinData },
         ],
-        xaxis: { type: "datetime" },
+        xaxis: {
+          type: "datetime",
+          labels: {
+            style: { colors: textColor, fontSize: "11px" },
+          },
+        },
         yaxis: {
-          min: 0,
-          max: 4000,
-          tickAmount: 4,
+          min: yMin,
+          max: 100,
+          tickAmount: 5,
+          labels: {
+            formatter: (val: number) => val.toFixed(1) + "%",
+            style: { colors: textColor, fontSize: "11px" },
+          },
         },
         tooltip: {
+          x: { format: "yyyy-MM-dd" },
+          y: {
+            formatter: (val: number) => val.toFixed(2) + "%",
+          },
           theme: isDark ? "dark" : "light",
         },
       });
