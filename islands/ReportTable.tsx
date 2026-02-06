@@ -27,22 +27,40 @@ function ExpandIcon({ expanded }: { expanded: boolean }) {
   );
 }
 
-function FailCount({
+function CategorySummary({
   report,
   testNames,
+  showDetails,
 }: {
   report: TestReport | undefined;
   testNames: string[];
+  showDetails: boolean;
 }) {
-  if (!report) return null;
   const rate = getRateForSubset(report, testNames);
-  if (!rate) return null;
+  if (!rate) {
+    return (
+      <span class="text-gray-500 dark:text-gray-400 text-sm font-normal">
+        N/A
+      </span>
+    );
+  }
   const fail = rate.total - rate.pass;
-  if (fail === 0) return null;
   return (
-    <span class="text-red-500 dark:text-red-400 text-xs font-mono ml-1">
-      {fail} failing
-    </span>
+    <div>
+      <span class="underline decoration-dotted">
+        {(rate.pass / rate.total * 100).toFixed(2)}%
+      </span>
+      {showDetails && (
+        <div class="text-xs text-gray-500 dark:text-gray-400">
+          {rate.pass}/{rate.total} passing
+          {fail > 0 && (
+            <span class="text-red-500 dark:text-red-400 ml-1">
+              ({fail} fail)
+            </span>
+          )}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -93,8 +111,12 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
       <table class="border-collapse table-fixed w-full">
         <thead>
           <tr>
-            <th class="align-bottom" colSpan={TEST_NAME_COLSPAN}></th>
-            <th class="align-top">
+            <th
+              class="align-bottom bg-gray-50 dark:bg-gray-800"
+              colSpan={TEST_NAME_COLSPAN}
+            >
+            </th>
+            <th class="align-top text-left px-1 bg-gray-50 dark:bg-gray-800">
               Linux
               <br class="inline sm:hidden" />
               <LinkToJsonAndErrors date={date} os="linux" />
@@ -108,7 +130,7 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
                 rev <DenoVersion version={report.linux?.denoVersion} />
               </p>
             </th>
-            <th>
+            <th class="text-left px-1 bg-gray-50 dark:bg-gray-800">
               Windows
               <br class="inline sm:hidden" />
               <LinkToJsonAndErrors date={date} os="windows" />
@@ -122,7 +144,7 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
                 rev <DenoVersion version={report.windows?.denoVersion} />
               </p>
             </th>
-            <th>
+            <th class="text-left px-1 bg-gray-50 dark:bg-gray-800">
               Darwin
               <br class="inline sm:hidden" />
               <LinkToJsonAndErrors date={date} os="darwin" />
@@ -147,7 +169,7 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
           return (
             <tbody key={category} id={category}>
               <tr
-                class="text-center bg-gray-50 border-t border-gray-300 dark:bg-gray-800 dark:border-gray-700 cursor-pointer select-none hover:bg-gray-100 dark:hover:bg-gray-750 transition-colors duration-100"
+                class="bg-gray-50 border-t border-gray-300 dark:bg-gray-800 dark:border-gray-700 cursor-pointer select-none hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-100"
                 onClick={() => toggleCategory(category)}
               >
                 <td
@@ -174,29 +196,26 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
                     />
                   )}
                 </td>
-                <td>
-                  <span class="text-sm">
-                    <Summary data={getRateForSubset(linux, testNames)} />
-                  </span>
-                  {!isExpanded && (
-                    <FailCount report={linux} testNames={testNames} />
-                  )}
+                <td class="text-left text-sm font-mono py-2 px-1">
+                  <CategorySummary
+                    report={linux}
+                    testNames={testNames}
+                    showDetails={!isExpanded}
+                  />
                 </td>
-                <td>
-                  <span class="text-sm">
-                    <Summary data={getRateForSubset(windows, testNames)} />
-                  </span>
-                  {!isExpanded && (
-                    <FailCount report={windows} testNames={testNames} />
-                  )}
+                <td class="text-left text-sm font-mono py-2 px-1">
+                  <CategorySummary
+                    report={windows}
+                    testNames={testNames}
+                    showDetails={!isExpanded}
+                  />
                 </td>
-                <td>
-                  <span class="text-sm">
-                    <Summary data={getRateForSubset(darwin, testNames)} />
-                  </span>
-                  {!isExpanded && (
-                    <FailCount report={darwin} testNames={testNames} />
-                  )}
+                <td class="text-left text-sm font-mono py-2 px-1">
+                  <CategorySummary
+                    report={darwin}
+                    testNames={testNames}
+                    showDetails={!isExpanded}
+                  />
                 </td>
               </tr>
               {isExpanded &&
@@ -212,11 +231,11 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
                   return (
                     <tr
                       key={testName}
-                      class="border-t border-gray-300 font-mono dark:text-gray-400 dark:border-gray-700"
+                      class="border-t border-gray-300 font-mono dark:text-gray-400 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-100"
                     >
                       <td
                         colSpan={TEST_NAME_COLSPAN}
-                        class="text-xs py-1 whitespace-nowrap sm:overflow-visible overflow-scroll px-1"
+                        class="text-xs py-2 whitespace-nowrap sm:overflow-visible overflow-scroll px-3"
                       >
                         <span class="relative group">
                           <a
@@ -235,7 +254,7 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
                         </span>
                       </td>
                       {[linux, windows, darwin].map((result) => (
-                        <td class="text-center">
+                        <td class="text-left py-2 px-1">
                           <Result result={result} />
                         </td>
                       ))}

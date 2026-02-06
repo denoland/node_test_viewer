@@ -54,7 +54,7 @@ export default define.page<typeof handler>((props) => {
           <span class="font-bold">Results</span> {report.date}
         </h2>
       </div>
-      <div class="w-full sm:w-4/5 mx-auto h-[1400px]">
+      <div class="w-full sm:w-4/5 mx-auto">
         <ResultByCategoryChart report={report} />
       </div>
       <div class="w-full pt-4 pb-5 border-b border-dashed">
