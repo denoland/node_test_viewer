@@ -33,7 +33,7 @@ export default define.page<typeof handler>(function (props) {
         <div class="w-full flex justify-center">
           <Chart
             summaryReports={daySummaries}
-            class="w-full sm:w-4/5 h-[200px]"
+            class="w-full sm:w-4/5 h-[500px]"
           />
         </div>
         <div class="mt-10">

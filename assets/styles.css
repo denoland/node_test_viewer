@@ -1,8 +1,6 @@
 /* Copyright 2025 the Deno authors. MIT license. */
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 @layer base {
   body {
