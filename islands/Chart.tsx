@@ -109,7 +109,7 @@ export function Chart(
           theme: isDark ? "dark" : "light",
         },
       });
-      chart.render();
+      chart!.render();
     })();
 
     return () => {

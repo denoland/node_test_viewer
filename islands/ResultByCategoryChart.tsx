@@ -148,7 +148,7 @@ function Heatmap(
         },
         series,
       });
-      chart.render();
+      chart!.render();
     })();
     return () => {
       chart?.destroy();
@@ -242,7 +242,7 @@ function Treemap(
         },
         series: [{ data: treemapData }],
       });
-      chart.render();
+      chart!.render();
     })();
     return () => {
       chart?.destroy();
