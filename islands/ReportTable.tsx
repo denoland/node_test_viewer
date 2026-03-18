@@ -238,16 +238,11 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
                         class="text-xs py-2 whitespace-nowrap sm:overflow-visible overflow-scroll px-3"
                       >
                         <span class="relative group">
-                          <a
-                            href={`https://github.com/nodejs/node/blob/v${nodeVersion}/test/${testName}`}
-                            class="hover:text-blue-500 hover:dark:text-blue-400"
-                            target="_blank"
-                          >
-                            {testName}
-                          </a>
+                          <CopyableTestName testName={testName} />
                           <div class="sm:block hidden">
                             <CommandTooltip
                               path={testName}
+                              nodeVersion={nodeVersion}
                               useNodeTest={resultOption?.usesNodeTest}
                             />
                           </div>
@@ -361,7 +356,34 @@ function useCopyState(text: string) {
   return [copied, copy] as const;
 }
 
-function CommandTooltip(props: { path: string; useNodeTest?: boolean }) {
+function getShortTestName(testName: string): string {
+  return testName.replace(/^[^/]*\//, "");
+}
+
+function CopyableTestName({ testName }: { testName: string }) {
+  const shortName = getShortTestName(testName);
+  const [copied, copy] = useCopyState(shortName);
+  return (
+    <button
+      type="button"
+      onClick={(e) => {
+        e.stopPropagation();
+        copy();
+      }}
+      class="hover:text-blue-500 hover:dark:text-blue-400 cursor-pointer"
+      title={copied ? "Copied!" : `Click to copy: ${shortName}`}
+    >
+      {testName}
+      {copied && (
+        <span class="ml-1 text-green-500 dark:text-green-400">copied!</span>
+      )}
+    </button>
+  );
+}
+
+function CommandTooltip(
+  props: { path: string; nodeVersion?: string; useNodeTest?: boolean },
+) {
   const [useDev, setUseDev] = useState(false);
   const denoPath = useDev ? "./target/debug/deno" : "deno";
   const denoSubcommand = props.useNodeTest ? "test" : "run";
@@ -430,6 +452,17 @@ function CommandTooltip(props: { path: string; useNodeTest?: boolean }) {
       <pre class="mt-1 font-mono bg-gray-700 px-4 py-2 overflow-scroll dark:bg-gray-900">
         <code class="text-gray-200 dark:text-gray-400">{props.path}</code>
       </pre>
+      {props.nodeVersion && (
+        <p class="mt-6 px-4">
+          <a
+            href={`https://github.com/nodejs/node/blob/v${props.nodeVersion}/test/${props.path}`}
+            class="text-blue-500 dark:text-blue-400 hover:underline"
+            target="_blank"
+          >
+            View source on GitHub
+          </a>
+        </p>
+      )}
     </div>
   );
 }
