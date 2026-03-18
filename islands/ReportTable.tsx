@@ -30,11 +30,9 @@ function ExpandIcon({ expanded }: { expanded: boolean }) {
 function CategorySummary({
   report,
   testNames,
-  showDetails,
 }: {
   report: TestReport | undefined;
   testNames: string[];
-  showDetails: boolean;
 }) {
   const rate = getRateForSubset(report, testNames);
   if (!rate) {
@@ -50,16 +48,14 @@ function CategorySummary({
       <span class="underline decoration-dotted">
         {(rate.pass / rate.total * 100).toFixed(2)}%
       </span>
-      {showDetails && (
-        <div class="text-xs text-gray-500 dark:text-gray-400">
-          {rate.pass}/{rate.total} passing
-          {fail > 0 && (
-            <span class="text-red-500 dark:text-red-400 ml-1">
-              ({fail} fail)
-            </span>
-          )}
-        </div>
-      )}
+      <div class="text-xs text-gray-500 dark:text-gray-400">
+        {rate.pass}/{rate.total} passing
+        {fail > 0 && (
+          <span class="text-red-500 dark:text-red-400 ml-1">
+            ({fail} fail)
+          </span>
+        )}
+      </div>
     </div>
   );
 }
@@ -200,21 +196,18 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
                   <CategorySummary
                     report={linux}
                     testNames={testNames}
-                    showDetails={!isExpanded}
                   />
                 </td>
                 <td class="text-left text-sm font-mono py-2 px-1">
                   <CategorySummary
                     report={windows}
                     testNames={testNames}
-                    showDetails={!isExpanded}
                   />
                 </td>
                 <td class="text-left text-sm font-mono py-2 px-1">
                   <CategorySummary
                     report={darwin}
                     testNames={testNames}
-                    showDetails={!isExpanded}
                   />
                 </td>
               </tr>
@@ -360,6 +353,39 @@ function getShortTestName(testName: string): string {
   return testName.replace(/^[^/]*\//, "");
 }
 
+function CopyIcon() {
+  return (
+    <svg
+      class="inline-block w-3.5 h-3.5 ml-1 opacity-0 group-hover:opacity-50 transition-opacity duration-150"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+    </svg>
+  );
+}
+
+function CheckIcon() {
+  return (
+    <svg
+      class="inline-block w-3.5 h-3.5 ml-1 text-green-500 dark:text-green-400"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  );
+}
+
 function CopyableTestName({ testName }: { testName: string }) {
   const shortName = getShortTestName(testName);
   const [copied, copy] = useCopyState(shortName);
@@ -370,13 +396,11 @@ function CopyableTestName({ testName }: { testName: string }) {
         e.stopPropagation();
         copy();
       }}
-      class="hover:text-blue-500 hover:dark:text-blue-400 cursor-pointer"
+      class="hover:text-blue-500 hover:dark:text-blue-400 cursor-pointer inline-flex items-center"
       title={copied ? "Copied!" : `Click to copy: ${shortName}`}
     >
       {testName}
-      {copied && (
-        <span class="ml-1 text-green-500 dark:text-green-400">copied!</span>
-      )}
+      {copied ? <CheckIcon /> : <CopyIcon />}
     </button>
   );
 }
@@ -385,15 +409,10 @@ function CommandTooltip(
   props: { path: string; nodeVersion?: string; useNodeTest?: boolean },
 ) {
   const [useDev, setUseDev] = useState(false);
-  const denoPath = useDev ? "./target/debug/deno" : "deno";
-  const denoSubcommand = props.useNodeTest ? "test" : "run";
-  const command0 =
-    `NODE_TEST_KNOWN_GLOBALS=0 NODE_SKIP_FLAG_CHECK=1 ${denoPath} ${denoSubcommand} -A --unstable-bare-node-builtins --unstable-node-globals --unstable-detect-cjs --quiet tests/node_compat/runner/suite/test/${props.path}`;
-  const command1 =
-    `${denoPath} -A ./tools/node_compat_tests.js --filter ${props.path}`;
+  const testName = getShortTestName(props.path);
+  const command0 = `./x test-compat ${testName}`;
   const [copied0, copy0] = useCopyState(command0);
-  const [copied1, copy1] = useCopyState(command1);
-  const [pathCopied, copyPath] = useCopyState(props.path);
+
   useEffect(() => {
     if (localStorage["useDevDeno"] === "true") {
       setUseDev(true);
@@ -419,18 +438,6 @@ function CommandTooltip(
       <p class="px-4">
         You can run this test with the command below (<button
           type="button"
-          onClick={copy1}
-          class="text-blue-500 dark:text-blue-400"
-        >
-          {copied1 ? "Copied!" : "Click to copy"}
-        </button>):
-      </p>
-      <pre class="mt-1 font-mono bg-gray-700 px-4 py-2 overflow-scroll dark:bg-gray-900">
-        <code class="text-gray-200 dark:text-gray-400">{command1}</code>
-      </pre>
-      <p class="mt-6 px-4">
-        Or, without using wrapper script (<button
-          type="button"
           onClick={copy0}
           class="text-blue-500 dark:text-blue-400"
         >
@@ -439,18 +446,6 @@ function CommandTooltip(
       </p>
       <pre class="mt-1 font-mono bg-gray-700 px-4 py-2 overflow-scroll dark:bg-gray-900">
         <code class="text-gray-200 dark:text-gray-400">{command0}</code>
-      </pre>
-      <p class="mt-6 px-4">
-        Copy the test name to clipboard (<button
-          type="button"
-          onClick={copyPath}
-          class="text-blue-500 dark:text-blue-400"
-        >
-          {pathCopied ? "Copied!" : "Click to copy"}
-        </button>)
-      </p>
-      <pre class="mt-1 font-mono bg-gray-700 px-4 py-2 overflow-scroll dark:bg-gray-900">
-        <code class="text-gray-200 dark:text-gray-400">{props.path}</code>
       </pre>
       {props.nodeVersion && (
         <p class="mt-6 px-4">
