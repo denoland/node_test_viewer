@@ -357,7 +357,7 @@ function useCopyState(text: string) {
 }
 
 function getShortTestName(testName: string): string {
-  return testName.replace(/^(?:parallel|sequential)\//, "");
+  return testName.replace(/^[^/]*\//, "");
 }
 
 function CopyableTestName({ testName }: { testName: string }) {
