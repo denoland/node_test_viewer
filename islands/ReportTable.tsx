@@ -60,6 +60,35 @@ function CategorySummary({
   );
 }
 
+type SortMode =
+  | "name"
+  | "pass-rate-desc"
+  | "pass-rate-asc"
+  | "pass-count-desc"
+  | "pass-count-asc";
+
+function getSortValue(
+  report: DayReport,
+  testNames: string[],
+  mode: SortMode,
+): number {
+  // Aggregate across all available OSes for sorting
+  let totalPass = 0;
+  let totalCount = 0;
+  for (const os of ["linux", "windows", "darwin"] as const) {
+    const r = report[os];
+    if (!r) continue;
+    const rate = getRateForSubset(r, testNames);
+    if (rate) {
+      totalPass += rate.pass;
+      totalCount += rate.total;
+    }
+  }
+  if (totalCount === 0) return mode.includes("desc") ? -1 : Infinity;
+  if (mode.startsWith("pass-rate")) return totalPass / totalCount;
+  return totalPass;
+}
+
 export function ReportTable(props: { class?: string; report: DayReport }) {
   const { report } = props;
 
@@ -68,6 +97,7 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
   const date = report.date;
 
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const [sortMode, setSortMode] = useState<SortMode>("name");
 
   const toggleCategory = (category: string) => {
     setExpanded((prev) => ({ ...prev, [category]: !prev[category] }));
@@ -85,24 +115,59 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
     setExpanded({});
   };
 
+  const sortedCategories = sortMode === "name"
+    ? testCategories
+    : [...testCategories].sort((a, b) => {
+      const va = getSortValue(report, a[1], sortMode);
+      const vb = getSortValue(report, b[1], sortMode);
+      return sortMode.endsWith("desc") ? vb - va : va - vb;
+    });
+
   return (
     <div class={props.class ?? ""}>
-      <div class="flex justify-end gap-2 mb-2 px-3">
-        <button
-          type="button"
-          onClick={expandAll}
-          class="text-xs text-blue-500 dark:text-blue-400 hover:underline"
-        >
-          Expand all
-        </button>
-        <span class="text-gray-400">|</span>
-        <button
-          type="button"
-          onClick={collapseAll}
-          class="text-xs text-blue-500 dark:text-blue-400 hover:underline"
-        >
-          Collapse all
-        </button>
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-2 px-3">
+        <div class="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-400">
+          <span>Sort:</span>
+          {(
+            [
+              ["name", "Name"],
+              ["pass-rate-desc", "Rate \u2193"],
+              ["pass-rate-asc", "Rate \u2191"],
+              ["pass-count-desc", "Passing \u2193"],
+              ["pass-count-asc", "Passing \u2191"],
+            ] as [SortMode, string][]
+          ).map(([mode, label]) => (
+            <button
+              key={mode}
+              type="button"
+              onClick={() => setSortMode(mode)}
+              class={`px-1.5 py-0.5 rounded ${
+                sortMode === mode
+                  ? "bg-blue-500 text-white dark:bg-blue-600"
+                  : "text-blue-500 dark:text-blue-400 hover:underline"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        <div class="flex gap-2">
+          <button
+            type="button"
+            onClick={expandAll}
+            class="text-xs text-blue-500 dark:text-blue-400 hover:underline"
+          >
+            Expand all
+          </button>
+          <span class="text-gray-400">|</span>
+          <button
+            type="button"
+            onClick={collapseAll}
+            class="text-xs text-blue-500 dark:text-blue-400 hover:underline"
+          >
+            Collapse all
+          </button>
+        </div>
       </div>
       <table class="border-collapse table-fixed w-full">
         <thead>
@@ -156,7 +221,7 @@ export function ReportTable(props: { class?: string; report: DayReport }) {
             </th>
           </tr>
         </thead>
-        {testCategories.map(([category, testNames]) => {
+        {sortedCategories.map(([category, testNames]) => {
           testNames.sort();
           const linux = report.linux;
           const windows = report.windows;
