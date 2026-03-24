@@ -39,13 +39,6 @@ export function Chart(
       const windowsData = extractData("windows", props.summaryReports);
       const darwinData = extractData("darwin", props.summaryReports);
 
-      // Auto-calculate y-axis range from data
-      const allValues = [...linuxData, ...windowsData, ...darwinData].map(
-        (d) => d[1],
-      );
-      const minVal = Math.min(...allValues);
-      const yMin = Math.max(0, Math.floor(minVal - 2));
-
       chart = new ApexCharts(chartRef.current!, {
         chart: {
           type: "line",
@@ -93,7 +86,7 @@ export function Chart(
           },
         },
         yaxis: {
-          min: yMin,
+          min: 0,
           max: 100,
           tickAmount: 5,
           labels: {
