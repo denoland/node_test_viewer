@@ -2,6 +2,7 @@
 
 type SingleResultOption = {
   usesNodeTest?: boolean;
+  ignoreReason?: string;
 };
 
 export type SingleResult =

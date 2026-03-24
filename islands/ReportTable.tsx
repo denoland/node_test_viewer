@@ -359,7 +359,14 @@ function Result(
     return <span class="text-green-500 dark:text-green-400">PASS</span>;
   }
   if (result[0] === "IGNORE") {
-    return <span class="text-gray-500 dark:text-gray-400">IGNORE</span>;
+    const reason = result[2]?.ignoreReason || "(no reason specified)";
+    return (
+      <span class="text-gray-500 dark:text-gray-400 relative group">
+        IGNORE
+        <span class="text-xs ml-0.5 cursor-help">?</span>
+        <ErrorTooltip text={reason} />
+      </span>
+    );
   }
   const error = result[1];
   if (error) {
