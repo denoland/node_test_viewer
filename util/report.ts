@@ -16,8 +16,30 @@ const NOT_FOUND = Symbol("NOT_FOUND");
 const reportCache = new WeakValueMap<string, TestReport | typeof NOT_FOUND>();
 const summaryCache = new WeakValueMap<string, MonthSummary>();
 
+const SHARD_COUNT = 3;
+
+async function fetchSingleReport(
+  url: string,
+): Promise<TestReport | undefined> {
+  try {
+    const res = await fetch(url);
+    if (res.status === 404) {
+      return undefined;
+    }
+    const report = await toJson(
+      res.body!.pipeThrough(new DecompressionStream("gzip")),
+    );
+    return report as TestReport;
+  } catch (e) {
+    console.error(e);
+    return undefined;
+  }
+}
+
 /**
  * Fetch the report for a specific date and OS.
+ * Fetches sharded reports and merges them, with fallback to the old
+ * unsharded format for historical data.
  *
  * @param date The date e.g. 2025-04-02
  * @param os The os
@@ -28,21 +50,42 @@ export async function fetchReport(
   os: "linux" | "windows" | "darwin",
 ): Promise<TestReport | typeof NOT_FOUND | undefined> {
   console.log("fetching", date, os);
-  try {
-    const res = await fetch(
+  // Fetch all shard reports and merge them
+  const shardReports: TestReport[] = [];
+  for (let i = 0; i < SHARD_COUNT; i++) {
+    const report = await fetchSingleReport(
+      `https://dl.deno.land/node-compat-test/${date}/report-${os}-${i}.json.gz`,
+    );
+    if (report) {
+      shardReports.push(report);
+    }
+  }
+  // Fall back to unsharded report name for older reports
+  if (shardReports.length === 0) {
+    const report = await fetchSingleReport(
       `https://dl.deno.land/node-compat-test/${date}/report-${os}.json.gz`,
     );
-    if (res.status === 404) {
-      return NOT_FOUND;
-    }
-    const report = await toJson(
-      res.body!.pipeThrough(new DecompressionStream("gzip")),
-    );
-    return report as TestReport;
-  } catch (e) {
-    console.error(e);
-    return undefined;
+    return report ?? NOT_FOUND;
   }
+  if (shardReports.length === 1) {
+    return shardReports[0];
+  }
+  // Merge shard reports: combine results, recompute counts
+  const merged = { ...shardReports[0] };
+  merged.results = { ...merged.results };
+  for (let i = 1; i < shardReports.length; i++) {
+    const shard = shardReports[i];
+    for (const [key, value] of Object.entries(shard.results)) {
+      merged.results[key] = value;
+    }
+  }
+  // Recompute total/pass from merged results.
+  // Each result is a tuple [pass: bool | "IGNORE", error, info].
+  const values = Object.values(merged.results);
+  merged.total = values.filter((v) => v[0] !== "IGNORE").length;
+  merged.pass = values.filter((v) => v[0] === true).length;
+  merged.ignore = values.filter((v) => v[0] === "IGNORE").length;
+  return merged;
 }
 
 /** Gets the report. Caches the response from the storage. */
