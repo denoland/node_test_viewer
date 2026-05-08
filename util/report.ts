@@ -235,6 +235,23 @@ export async function getSummariesForLatestMonths(
   return summaries;
 }
 
+export async function getSummariesSinceMonth(
+  startMonth: string,
+): Promise<MonthSummary[]> {
+  const current = new Date(startMonth + "-15");
+  const now = new Date();
+  const summaries: MonthSummary[] = [];
+  while (current <= now) {
+    const monthName = current.toISOString().slice(0, 7);
+    const summary = await getMonthSummary(monthName);
+    if (Object.keys(summary.reports).length > 0) {
+      summaries.push(summary);
+    }
+    current.setMonth(current.getMonth() + 1);
+  }
+  return summaries;
+}
+
 export async function addDaySummaryByDate(
   monthSummary: MonthSummary,
   date: string,

@@ -5,16 +5,13 @@ import { DenoVersion } from "components/DenoVersion.tsx";
 import { LinkToJsonAndErrors } from "components/LinkToJsonAndErrors.tsx";
 import { Chart } from "islands/Chart.tsx";
 import { SummaryTable } from "islands/SummaryTable.tsx";
-import {
-  getLatestDaySummary,
-  getSummariesForLatestMonths,
-} from "util/report.ts";
+import { getLatestDaySummary, getSummariesSinceMonth } from "util/report.ts";
 import { DaySummary } from "util/types.ts";
 
 export const handler = define.handlers({
   async GET() {
-    const monthSummaries = await getSummariesForLatestMonths(3);
-    const monthSummary = monthSummaries[0];
+    const monthSummaries = await getSummariesSinceMonth("2026-01");
+    const monthSummary = monthSummaries[monthSummaries.length - 1];
     const daySummaries = monthSummaries.reduce(
       (acc, month) => Object.assign(acc, month.reports),
       {} as Record<string, DaySummary>,
