@@ -238,10 +238,10 @@ export async function getSummariesForLatestMonths(
 export async function getSummariesSinceMonth(
   startMonth: string,
 ): Promise<MonthSummary[]> {
-  const current = new Date(startMonth + "-15");
-  const now = new Date();
+  const current = new Date(startMonth + "-01");
+  const endMonth = new Date().toISOString().slice(0, 7);
   const summaries: MonthSummary[] = [];
-  while (current <= now) {
+  while (current.toISOString().slice(0, 7) <= endMonth) {
     const monthName = current.toISOString().slice(0, 7);
     const summary = await getMonthSummary(monthName);
     if (Object.keys(summary.reports).length > 0) {
